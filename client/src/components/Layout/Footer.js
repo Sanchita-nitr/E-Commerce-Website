@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <div className="bg-gray-200 text-gray-600 font-light text-center mt-auto py-4">
+    <div className="bg-gray-200 text-gray-600 font-light text-center mt-auto py-4 max-h-screen">
       <div className="text-center">
         <p>© 2024 Sanchita Priyadarshinee</p>
         <p>All rights reserved</p>

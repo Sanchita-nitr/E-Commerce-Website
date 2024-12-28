@@ -9,11 +9,12 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
+    const [answer, setAnswer] = useState('');
     const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/register`, { name, email, password, phone, address })
+            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/register`, { name, email, password, phone, address,answer })
 
             if (res.data.success) {
                 toast.success(res.data.message)
@@ -43,7 +44,7 @@ const Register = () => {
                 {/* Overlay for fading effect */}
                 <div className="absolute inset-0 bg-black opacity-30"></div>
 
-                <div className=" relative bg-cover text-center justify-center w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg " style={{
+                <div className=" relative bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg " style={{
                     backgroundImage: 'url("/images/reg1.jpg.avif")',
                 }}>
 
@@ -120,6 +121,19 @@ const Register = () => {
                                 id="address"
                                 name="address"
                                 placeholder='Enter Your Address'
+                                required
+                                className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
+                            />
+                        </div>
+                        <div>
+
+                            <input
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                                type="text"
+                                id="answer"
+                                name="answer"
+                                placeholder='What is your favorite food? '
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />

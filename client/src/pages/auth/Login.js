@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout/Layout';
 import { useAuth } from '../../context/auth';
 
@@ -10,8 +10,9 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [auth,setAuth] = useAuth();
+    const [auth, setAuth] = useAuth();
 
+    const location = useLocation()
     const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,10 +24,10 @@ const Login = () => {
                 setAuth({
                     ...auth,
                     user: res.data.user,
-                    token:res.data.token
+                    token: res.data.token
                 })
                 localStorage.setItem('auth', JSON.stringify(res.data));
-                navigate('/')
+                navigate(location.state || '/')
             }
             else {
                 toast.error(res.data.message)
@@ -40,8 +41,9 @@ const Login = () => {
     }
 
     return (
-        <div>
-            <Layout title="Register to the Website">
+     
+            <Layout title="Login to the Website">
+
                 {/* <div className="flex items-center justify-center min-h-screen bg-red-200"> */}
                 <div
                     className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
@@ -52,7 +54,7 @@ const Login = () => {
                     {/* Overlay for fading effect */}
                     <div className="absolute inset-0 bg-black opacity-30"></div>
 
-                    <div className=" relative bg-cover text-center justify-center w-full max-w-lg p-10 shadow-black shadow-lg rounded-lg " style={{
+                    <div className=" p-16 relative bg-cover text-center justify-center lg:w-full max-w-lg shadow-black shadow-lg rounded-lg " style={{
                         backgroundImage: 'url("/images/reg1.jpg.avif")',
                     }}>
 
@@ -92,19 +94,28 @@ const Login = () => {
 
 
 
+                            <div className='grid grid-cols-2 space-x-3 '>
+                                <button
+                                    type="submit"
+                                    className=" bg-teal-300 font-semibold text-black py-2 rounded hover:bg-yellow-200 hover:text-black"
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => { navigate('/forgot-password') }}
+                                    type="submit"
+                                    className=" bg-teal-300 font-semibold text-black rounded hover:bg-yellow-200 hover:text-black"
+                                >
+                                    Forgot Password
+                                </button>
+                            </div>
 
-                            <button
-                                type="submit"
-                                className=" bg-blue-950 font-semibold text-white p-3 px-5 rounded hover:bg-yellow-200 hover:text-black"
-                            >
-                                Login
-                            </button>
                         </form>
                     </div>
 
                 </div>
             </Layout>
-        </div>
+ 
     )
 }
 

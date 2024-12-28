@@ -20,7 +20,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className=" border-2 shadow-md">
+    <div className=" border-2 shadow-md overflow-hidden">
       <nav className=" flex justify-between items-center">
         {/* Left side - Website name */}
         <span className="text-2xl font-semibold  ml-5"><NavLink to="/"> My Website</NavLink> </span>
@@ -47,6 +47,9 @@ const Header = () => {
                   Home
                 </NavLink>
               </li>
+          
+              {
+            !auth.user ? (<>
               <li>
                 <NavLink
                   className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
@@ -63,6 +66,18 @@ const Header = () => {
                   Login
                 </NavLink>
               </li>
+            </>) : (<>
+              <li>
+                <NavLink onClick={handleLogout}
+                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
+                  to="/login"
+                >
+                  Logout
+                </NavLink>
+              </li>
+
+            </>)
+          }
               <li>
                 <NavLink
                   className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
