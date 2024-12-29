@@ -48,7 +48,7 @@ const Register = () => {
                 {/* Register Modal */}
 
                 <div
-                    className=" bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg bg-transparent bg-white"
+                    className=" bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg bg-transparent"
                 >
                     <h2 className="flex text-center justify-center lg:text-4xl md:text-3xl text-xl font-serif font-bold mb-8">
                         Register a New Account
