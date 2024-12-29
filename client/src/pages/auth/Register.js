@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout/Layout';
+
 const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -10,53 +11,49 @@ const Register = () => {
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
     const [answer, setAnswer] = useState('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/register`, { name, email, password, phone, address,answer })
+            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/register`, {
+                name,
+                email,
+                password,
+                phone,
+                address,
+                answer,
+            });
 
             if (res.data.success) {
-                toast.success(res.data.message)
-                navigate('/login')
+                toast.success(res.data.message);
+                navigate('/login'); // Navigate only when registration is successful
+            } else {
+                toast.error(res.data.message);
             }
-            else {
-                toast.error(res.data.message)
-            }
-
+        } catch (error) {
+            console.log(error);
+            toast.error('Something went wrong');
         }
-        catch (error) {
-            console.log(error)
-            toast.error("Something went Wrong")
-        }
-    }
-
+    };
 
     return (
         <Layout title="Register to the Website">
-            {/* <div className="flex items-center justify-center min-h-screen bg-red-200"> */}
             <div
                 className="flex items-center justify-center min-h-screen bg-cover bg-center relative"
                 style={{
-                    backgroundImage: 'url("/images/bg2.png")',
+                    backgroundImage: 'url("/images/bg8.jpg")',
                 }}
             >
-                {/* Overlay for fading effect */}
-                <div className="absolute inset-0 bg-black opacity-30"></div>
-
-                <div className=" relative bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg " style={{
-                    backgroundImage: 'url("/images/reg1.jpg.avif")',
-                }}>
-
-
-
-                    <h2
-                        className="flex text-center justify-center lg:text-4xl md:text-3xl text-xl font-serif font-bold mb-8 text-white "
-
-                    >
+                {/* Register Modal */}
+             
+                <div
+                    className=" bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg bg-transparent bg-white"
+                >
+                    <h2 className="flex text-center justify-center lg:text-4xl md:text-3xl text-xl font-serif font-bold mb-8">
                         Register a New Account
                     </h2>
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <input
                                 value={name}
@@ -64,39 +61,35 @@ const Register = () => {
                                 type="text"
                                 id="name"
                                 name="name"
-                                placeholder='Enter Your Name'
+                                placeholder="Enter Your Name"
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
-
                         <div>
-
                             <input
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 type="email"
                                 id="email"
                                 name="email"
-                                placeholder='Enter your Email'
+                                placeholder="Enter your Email"
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
                         <div>
-
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder='Enter Your password'
+                                placeholder="Enter Your password"
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
-
                         <div>
                             <input
                                 type="text"
@@ -105,14 +98,13 @@ const Register = () => {
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 maxLength={10}
-                                placeholder='Enter Your Phone Number'
+                                placeholder="Enter Your Phone Number"
                                 pattern="^[0-9]{10}$"
                                 title="Enter a valid 10-digit mobile number"
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
-
                         <div>
                             <input
                                 value={address}
@@ -120,34 +112,31 @@ const Register = () => {
                                 type="text"
                                 id="address"
                                 name="address"
-                                placeholder='Enter Your Address'
+                                placeholder="Enter Your Address"
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
                         <div>
-
                             <input
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
                                 type="text"
                                 id="answer"
                                 name="answer"
-                                placeholder='What is your favorite food? '
+                                placeholder="What is your favorite food?"
                                 required
                                 className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-md"
                             />
                         </div>
-
                         <button
                             type="submit"
-                            className=" bg-blue-950 font-semibold text-white p-3 px-5 rounded hover:bg-yellow-200 hover:text-black"
+                            className="bg-blue-950 font-semibold text-white p-3 px-5 rounded hover:bg-yellow-200 hover:text-black"
                         >
                             Register
                         </button>
                     </form>
                 </div>
-
             </div>
         </Layout>
     );

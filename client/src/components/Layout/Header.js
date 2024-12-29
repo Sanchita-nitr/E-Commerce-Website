@@ -1,111 +1,89 @@
-
 "use client";
 import React, { useState } from "react";
 import { LuMenu } from "react-icons/lu";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import toast, { Toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
-  const handleLogout = ()=>{
-    setAuth({
-      ...auth,
-      user:null,
-      token:''
-    })
-    localStorage.removeItem('auth')
-    toast.success('Logout Successfully')
-  }
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleLogout = () => {
+    setAuth({
+      ...auth,
+      user: null,
+      token: '',
+    });
+    localStorage.removeItem('auth');
+    toast.success('Logout Successfully');
+  };
+
   return (
-    <div className=" border-2 shadow-md overflow-hidden">
-      <nav className=" flex justify-between items-center">
+    <div className=" shadow-lg w-full shadow-zinc-300 border-b-2 bg-white">
+    <nav className="flex justify-between items-center py-4 px-6">
         {/* Left side - Website name */}
-        <span className="text-2xl font-semibold  ml-5"><NavLink to="/"> My Website</NavLink> </span>
+        <span className="text-2xl font-bold text-blue-700 hover:text-blue-900 transition duration-300">
+          <NavLink to="/">My Website</NavLink>
+        </span>
 
         {/* Toggle button for mobile */}
         <div className="sm:block md:hidden">
-
           <button
-            className="flex items-center ml-5 px-2 py-1 border rounded"
+            className="flex items-center px-2 py-1 border rounded hover:bg-gray-200 transition"
             onClick={() => setIsOpen(!isOpen)}
           >
-            <LuMenu />
+            <LuMenu className="text-xl" />
           </button>
-
 
           {/* Mobile Menu */}
           {isOpen && (
-            <ul className=" md:hidden grid grid-rows-4 pt-10 rounded-xl bg-black-300 text-center">
-              <li className="mb-10">
-                <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/"
-                >
-                  Home
-                </NavLink>
+            <ul className="absolute top-16 right-4 w-48 bg-white shadow-lg rounded-lg">
+              <li className="py-2 px-4 hover:bg-gray-100">
+                <NavLink to="/">Home</NavLink>
               </li>
-          
-              {
-            !auth.user ? (<>
-              <li>
-                <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/register"
-                >
-                  Register
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/login"
-                >
-                  Login
-                </NavLink>
-              </li>
-            </>) : (<>
-              <li>
-                <NavLink onClick={handleLogout}
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/login"
-                >
-                  Logout
-                </NavLink>
-              </li>
-
-            </>)
-          }
-              <li>
-                <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/service"
-                >
-                  Service
-                </NavLink>
+              {!auth.user ? (
+                <>
+                  <li className="py-2 px-4 hover:bg-gray-100">
+                    <NavLink to="/register">Register</NavLink>
+                  </li>
+                  <li className="py-2 px-4 hover:bg-gray-100">
+                    <NavLink to="/login">Login</NavLink>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="py-2 px-4 hover:bg-gray-100">
+                    <NavLink to="/dashboard">Dashboard</NavLink>
+                  </li>
+                  <li className="py-2 px-4 hover:bg-gray-100">
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                </>
+              )}
+              <li className="py-2 px-4 hover:bg-gray-100">
+                <NavLink to="/service">Service</NavLink>
               </li>
             </ul>
           )}
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:grid grid-cols-4 justify-end text-center rounded-xl p-5 bg-black-300 mr-5">
+        <ul className="hidden md:flex items-center space-x-6">
           <li>
             <NavLink
-              className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
+              className="text-lg font-medium hover:text-blue-700 transition"
               to="/"
             >
               Home
             </NavLink>
           </li>
-
-          {
-            !auth.user ? (<>
+          {!auth.user ? (
+            <>
               <li>
                 <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
+                  className="text-lg font-medium hover:text-blue-700 transition"
                   to="/register"
                 >
                   Register
@@ -113,32 +91,41 @@ const Header = () => {
               </li>
               <li>
                 <NavLink
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
+                  className="text-lg font-medium hover:text-blue-700 transition"
                   to="/login"
                 >
                   Login
                 </NavLink>
               </li>
-            </>) : (<>
-              <li>
-                <NavLink onClick={handleLogout}
-                  className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
-                  to="/login"
-                >
-                  Logout
-                </NavLink>
-              </li>
-
-            </>)
-          }
-          <li>
+            </>
+          ) : (
+            <li className="relative">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="text-lg font-medium hover:text-blue-700 transition"
+              >
+                Account
+              </button>
+              {isDropdownOpen && (
+                <ul className="absolute right-0 bg-white text-gray-700 mt-2 rounded shadow-lg w-40">
+                  <li className="p-2 hover:bg-gray-100">
+                    <NavLink to="/dashboard">Dashboard</NavLink>
+                  </li>
+                  <li className="p-2 hover:bg-gray-100">
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                </ul>
+              )}
+            </li>
+          )}
+          {/* <li>
             <NavLink
-              className="p-4 rounded-2xl hover:underline font-medium font-serif bg-black-200"
+              className="text-lg font-medium hover:text-blue-700 transition"
               to="/service"
             >
               Service
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </div>
