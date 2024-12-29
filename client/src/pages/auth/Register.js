@@ -46,7 +46,7 @@ const Register = () => {
                 }}
             >
                 {/* Register Modal */}
-             
+
                 <div
                     className=" bg-cover text-center justify-center lg:w-full lg:max-w-xl max-w-sm p-10 shadow-black rounded-lg shadow-lg bg-transparent bg-white"
                 >

@@ -1,13 +1,13 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Layout from '../../components/Layout/Layout';
-import { useAuth } from '../../context/auth';
+import axios from "axios";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
+import Layout from "../../components/Layout/Layout";
+import { useAuth } from "../../context/auth";
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [auth, setAuth] = useAuth();
 
     const location = useLocation();
@@ -16,10 +16,13 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/auth/login`, {
-                email,
-                password,
-            });
+            const res = await axios.post(
+                `${process.env.REACT_APP_API}/api/v1/auth/login`,
+                {
+                    email,
+                    password,
+                }
+            );
 
             if (res.data.success) {
                 toast.success(res.data.message);
@@ -28,14 +31,14 @@ const Login = () => {
                     user: res.data.user,
                     token: res.data.token,
                 });
-                localStorage.setItem('auth', JSON.stringify(res.data));
-                navigate(location.state || '/'); // Navigate to the intended page or home
+                localStorage.setItem("auth", JSON.stringify(res.data));
+                navigate(location.state || "/"); // Navigate to the intended page or home
             } else {
                 toast.error(res.data.message);
             }
         } catch (error) {
             console.log(error);
-            toast.error('Something went wrong');
+            toast.error("Something went wrong");
         }
     };
 
@@ -95,7 +98,7 @@ const Login = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    navigate('/forgot-password');
+                                    navigate("/forgot-password");
                                 }}
                                 type="button"
                                 className="bg-teal-300 font-semibold text-black rounded hover:bg-yellow-200 hover:text-black"

@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { LuMenu } from "react-icons/lu";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import toast from "react-hot-toast";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
@@ -22,7 +22,7 @@ const Header = () => {
 
   return (
     <div className=" shadow-lg w-full shadow-zinc-300 border-b-2 bg-white">
-    <nav className="flex justify-between items-center py-4 px-6">
+      <nav className="flex justify-between items-center py-4 px-6">
         {/* Left side - Website name */}
         <span className="text-2xl font-bold text-blue-700 hover:text-blue-900 transition duration-300">
           <NavLink to="/">My Website</NavLink>
@@ -55,7 +55,7 @@ const Header = () => {
               ) : (
                 <>
                   <li className="py-2 px-4 hover:bg-gray-100">
-                    <NavLink to="/dashboard">Dashboard</NavLink>
+                  <NavLink to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>Dashboard</NavLink>
                   </li>
                   <li className="py-2 px-4 hover:bg-gray-100">
                     <button onClick={handleLogout}>Logout</button>
@@ -109,7 +109,7 @@ const Header = () => {
               {isDropdownOpen && (
                 <ul className="absolute right-0 bg-white text-gray-700 mt-2 rounded shadow-lg w-40">
                   <li className="p-2 hover:bg-gray-100">
-                    <NavLink to="/dashboard">Dashboard</NavLink>
+                    <NavLink to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>Dashboard</NavLink>
                   </li>
                   <li className="p-2 hover:bg-gray-100">
                     <button onClick={handleLogout}>Logout</button>
