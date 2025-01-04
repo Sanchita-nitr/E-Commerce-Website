@@ -212,3 +212,127 @@ export const deleteProductController = async (req, res) => {
     }
 };
 
+//filter product 
+export const filterProductController = async (req, res) => {
+    try {
+        const { checked, radio } = req.body;
+
+        // Initialize an empty query object
+        let args = {};
+
+        // Add category filter if checked is not empty
+        if (checked && checked.length > 0) {
+            args.category = { $in: checked }; // Use $in to match any of the checked categories
+        }
+
+        // Add price filter if radio is provided and valid
+        if (radio && radio.length === 2) {
+            const [minPrice, maxPrice] = radio;
+            if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+                args.price = { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) };
+            }
+        }
+
+        // Fetch products based on the constructed query
+        const products = await productModel.find(args);
+
+        // Send the filtered products as a response
+        res.status(200).send({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error in Filtering Products",
+            error,
+        });
+    }
+};
+
+//count product
+export const countProductController = async (req, res) => {
+    try {
+        const total = await productModel.find({}).estimatedDocumentCount();
+        res.status(200).send({
+            success: true,
+            total,
+        });
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error in Counting Products",
+            error,
+        });
+    }
+};
+
+
+//productList
+export const productListController = async (req, res) => {
+    try {
+        const perPage = 12
+        const page = req.params.page ? req.params.page : 1;
+        const products = await productModel.find({}).select("-photo").skip((page - 1)).limit(perPage).sort({ createdAt: -1 })
+        res.status(200).send({
+            success: true,
+            products,
+
+        })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error in Product Per Page",
+            error,
+        });
+    }
+};
+
+// search Product
+export const searchProductController = async (req, res) => {
+    try {
+        const { keyword } = req.params;
+        console.log("Search keyword:", keyword); // Debugging log
+
+        // Escape special characters in the keyword
+        const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        const results = await productModel.find({
+            $or: [
+                { name: { $regex: escapedKeyword, $options: "i" } },
+                { description: { $regex: escapedKeyword, $options: "i" } },
+            ],
+        }).select("-photo");
+
+        console.log("Search results:", results); // Debugging log
+
+        if (results.length === 0) {
+            return res.status(200).send({
+                success: true,
+                message: "No products found.",
+                results: [],
+            });
+        }
+
+        res.status(200).send({
+            success: true,
+            results,
+        });
+    } catch (error) {
+        console.error("Search error:", error);
+        res.status(400).send({
+            success: false,
+            message: "Error in Search Product",
+            error,
+        });
+    }
+};
+
+
+

@@ -1,5 +1,3 @@
-
-
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -8,7 +6,6 @@ import Layout from '../../components/Layout/Layout';
 import { useNavigate } from 'react-router-dom';
 
 const CreateProduct = () => {
-    // State hooks for various fields
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -20,7 +17,20 @@ const CreateProduct = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
-    // Get all categories
+    const formatINR = (value) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 2,
+        }).format(value || 0);
+    };
+
+    const handlePriceChange = (value) => {
+        // Allow only digits and decimals for the price input
+        const formattedValue = value.replace(/[^\d.]/g, '');
+        setPrice(formattedValue);
+    };
+
     const getAllCategories = async () => {
         try {
             const { data } = await axios.get('/api/v1/category/getall-category');
@@ -39,7 +49,6 @@ const CreateProduct = () => {
         getAllCategories();
     }, []);
 
-    // Handle form submission to create a product
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
@@ -51,7 +60,7 @@ const CreateProduct = () => {
             productData.append('shipping', shipping);
             productData.append('category', category);
             if (photo) productData.append('photo', photo);
-    
+
             const { data } = await axios.post('/api/v1/products/create-product', productData);
             if (data?.success) {
                 toast.success(data.message);
@@ -61,7 +70,6 @@ const CreateProduct = () => {
             }
         } catch (error) {
             console.error('Error creating product:', error);
-            // Log the error response for debugging
             if (error.response) {
                 console.error('Error response data:', error.response.data);
                 toast.error(error.response.data.error || 'Something went wrong while creating product');
@@ -71,25 +79,21 @@ const CreateProduct = () => {
         }
     };
 
-    // Reset category and clear related states
     const resetCategory = () => {
         setCategory('');
-        setPhoto(''); // Clear photo when resetting category
+        setPhoto('');
     };
 
     return (
         <Layout title={'Dashboard - Products'}>
-                    <div className="flex flex-col sm:flex-row min-h-screen">
+            <div className="flex flex-col sm:flex-row min-h-screen">
                 <div className="bg-gray-100 min-w-max">
                     <AdminMenu />
                 </div>
                 <div className="w-full p-4 md:p-6">
                     <div className="bg-white p-4 md:p-6 shadow rounded-md">
                         <h1 className="text-xl font-bold mb-4">Create Products</h1>
-
-                        {/* Form for creating a product */}
                         <form onSubmit={handleCreate}>
-                            {/* Dropdown for Categories */}
                             <div className="mt-4 rounded-md space-y-3">
                                 <select
                                     id="category"
@@ -103,29 +107,27 @@ const CreateProduct = () => {
                                             {cat.name}
                                         </option>
                                     ))}
-                                    {/* Option to reset the category */}
                                     <option
                                         value="reset"
                                         className="text-red-500"
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            resetCategory(); // Reset category without submitting form
+                                            resetCategory();
                                         }}
                                     >
                                         Reset Category
                                     </option>
                                 </select>
 
-                                {/* File upload section */}
                                 <div className="border block w-full rounded-md shadow-sm sm:text-sm p-4">
                                     <div
                                         className="cursor-pointer"
-                                        onClick={() => fileInputRef.current.click()}  // Trigger file input click
+                                        onClick={() => fileInputRef.current.click()}
                                     >
                                         {photo ? photo.name : "Upload Photo"}
                                     </div>
                                     <input
-                                        ref={fileInputRef}  // Attach the ref to the file input
+                                        ref={fileInputRef}
                                         type="file"
                                         name="photo"
                                         accept="image/*"
@@ -133,6 +135,7 @@ const CreateProduct = () => {
                                         hidden
                                     />
                                 </div>
+
                                 <div>
                                     {photo && (
                                         <div className="text-center flex justify-center">
@@ -154,6 +157,7 @@ const CreateProduct = () => {
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
+
                                 <div>
                                     <input
                                         type="text"
@@ -163,15 +167,18 @@ const CreateProduct = () => {
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
+
                                 <div>
                                     <input
-                                        type="number"
+                                        type="text"
                                         value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
+                                        onChange={(e) => handlePriceChange(e.target.value)}
                                         placeholder="Enter the Price"
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
+                                    <div className="text-gray-500 mt-1">{formatINR(price)}</div>
                                 </div>
+
                                 <div>
                                     <input
                                         type="number"
@@ -181,6 +188,7 @@ const CreateProduct = () => {
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
+
                                 <div>
                                     <select
                                         value={shipping}
@@ -192,6 +200,7 @@ const CreateProduct = () => {
                                         <option value="0">No</option>
                                     </select>
                                 </div>
+
                                 <div>
                                     <button type="submit" className="p-4 border rounded-md shadow-sm sm:text-sm">
                                         Create Product
@@ -207,4 +216,3 @@ const CreateProduct = () => {
 };
 
 export default CreateProduct;
-

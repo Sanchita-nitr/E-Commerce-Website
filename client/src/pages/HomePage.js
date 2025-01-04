@@ -1,27 +1,284 @@
-import React from 'react';
+import { Checkbox, Radio } from 'antd';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Prices } from '../components/Form/Prices';
 import Layout from '../components/Layout/Layout';
-import { useAuth } from '../context/auth';
 
 const HomePage = () => {
-    const [auth, setAuth] = useAuth();
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [checked, setChecked] = useState([]);
+    const [radio, setRadio] = useState('');
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
+    const getTotal = async () => {
+        try {
+            const { data } = await axios.get('/api/v1/products/count-product');
+            setTotal(data?.total);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getTotal();
+    }, []);
+
+    const loadMore = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(`/api/v1/products/product-list/${page}`);
+            setProducts([...products, ...data?.products]);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        if (page === 1) return;
+        loadMore();
+    }, [page]);
+
+    const carouselImages = [
+        '/images/about.jpg',
+        '/images/bg2.png',
+        '/images/bg5.jpg',
+    ];
+
+    const getAllCategories = async () => {
+        try {
+            const { data } = await axios.get('/api/v1/category/getall-category');
+            if (data?.success) {
+                setCategories(data.category);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
+    useEffect(() => {
+        getAllCategories();
+    }, []);
+
+    const getAllProducts = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(`/api/v1/products/product-list/${page}`);
+            setLoading(false);
+            setProducts(data.products);
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        getAllProducts();
+    }, [page]);
+
+    const handleFilter = (value, id) => {
+        let all = [...checked];
+        if (value) {
+            all.push(id);
+        } else {
+            all = all.filter((c) => c !== id);
+        }
+        setChecked(all);
+    };
+
+    useEffect(() => {
+        if (!checked.length && !radio) getAllProducts();
+    }, [checked.length, radio]);
+
+    useEffect(() => {
+        if (checked.length || radio) filterProduct();
+    }, [checked, radio]);
+
+    const filterProduct = async () => {
+        try {
+            const { data } = await axios.post('/api/v1/products/filter-product', {
+                checked,
+                radio,
+            });
+            setProducts(data?.products);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        const autoSlide = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+        }, 5000); // Auto-slide every 5 seconds
+
+        return () => clearInterval(autoSlide); // Cleanup on component unmount
+    }, [carouselImages.length]);
+
+    // Manual navigation
+    const handleNext = () => {
+        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    };
+
+    const handlePrev = () => {
+        setCurrentSlide((prev) =>
+            prev === 0 ? carouselImages.length - 1 : prev - 1
+        );
+    };
+
 
     return (
-        <Layout title={"Welcome to E-Commerce Website"}>
-            <div className="pt-20 min-h-screen bg-gray-100 p-6 font-serif">
-                {/* Title */}
-                <h1 className="text-3xl font-bold text-center text-blue-700 mb-6">
-                    HomePage
-                </h1>
-
-                {/* Token Display */}
-                <div className="bg-white p-4 rounded shadow-lg overflow-auto max-h-96 border border-gray-300">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700">
-                        {JSON.stringify(auth, null, 4)}
-                    </pre>
+        <Layout title="All products - E-Commerce">
+            {/* Carousel */}
+            <div className="relative w-full h-96 mb-8 mt-16 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0">
+                    {carouselImages.map((image, index) => (
+                        <img
+                            key={index}
+                            src={image}
+                            alt={`Slide ${index}`}
+                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                                }`}
+                        />
+                    ))}
                 </div>
+                {/* Manual Navigation */}
+                <button
+                    onClick={handlePrev}
+                    className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition"
+                >
+                    &lt;
+                </button>
+                <button
+                    onClick={handleNext}
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition"
+                >
+                    &gt;
+                </button>
+                {/* Indicator Dots */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    {carouselImages.map((_, index) => (
+                        <span
+                            key={index}
+                            className={`w-3 h-3 rounded-full ${currentSlide === index
+                                ? 'bg-blue-500'
+                                : 'bg-gray-300'
+                                }`}
+                        ></span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Filter Sidebar */}
+            <div className="grid grid-cols-12 gap-6 px-6">
+                <div className="col-span-12 md:col-span-3 bg-gray-100 p-6 rounded-lg shadow-lg">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filter by Category</h2>
+                    <div className="flex flex-col">
+                        {categories?.map((c) => (
+                            <label
+                                key={c._id}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 rounded-md px-3 py-2 transition"
+                            >
+                                <Checkbox
+                                    onChange={(e) => handleFilter(e.target.checked, c._id)}
+                                    className="text-blue-500"
+                                />
+                                <span className="text-gray-700">{c.name}</span>
+                            </label>
+                        ))}
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-800 mt-6 mb-4 border-b pb-2">Filter by Price</h2>
+                    <div className="flex flex-col ">
+                        <Radio.Group
+                            onChange={(e) => setRadio(e.target.value)}
+                            className=""
+                        >
+                            {Prices?.map((p) => (
+                                <div
+                                    key={p._id}
+                                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 rounded-md px-3 py-2 transition"
+                                >
+                                    <Radio value={p.range} className="text-blue-500" />
+                                    <span className="text-gray-700">{p.name}</span>
+                                </div>
+                            ))}
+                        </Radio.Group>
+                    </div>
+                    <div className="mt-6">
+                        <button
+                            className="w-full py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                            onClick={() => window.location.reload()}
+                        >
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+
+
+                {/* Main Content */}
+
+                <div className="col-span-12 md:col-span-9">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Our Products</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {products?.map((p) => (
+                            <div
+                                key={p._id}
+                                className="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1"
+                            >
+                                <div className="relative border-b p-4">
+                                    <img
+                                        src={`/api/v1/products/get-product-photo/${p._id}`}
+                                        alt={p.name}
+                                        className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                                    />
+                                </div>
+                                <div className="p-4">
+                                    <h2 className="text-lg font-semibold text-gray-800">{p.name}</h2>
+                                    <p className="text-sm text-gray-600 truncate">{p.description}</p>
+                                    <p className="text-sm text-gray-600 truncate">₹{p.price}</p>
+                                    <div className="mt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate(`/products/${p.slug}`)}
+                                            className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                                        >
+                                            
+                                            View Details
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="w-full py-2 mt-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="p-3 m-2 text-center">
+                        {products && products.length < total ? (
+                            <button
+                                type="button"
+                                onClick={() => setPage(page + 1)}
+                                className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                            >
+                                {loading ? 'Loading...' : 'Load More'}
+                            </button>
+                        ) : (
+                            <p className="text-gray-600">No more products to display</p>
+                        )}
+                    </div>
+                </div>
+
             </div>
         </Layout>
     );
 };
 
-export default HomePage;
+export default HomePage; 

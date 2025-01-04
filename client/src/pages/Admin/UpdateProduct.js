@@ -1,5 +1,3 @@
-
-
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -8,8 +6,7 @@ import AdminMenu from '../../components/Layout/AdminMenu';
 import Layout from '../../components/Layout/Layout';
 
 const UpdateProduct = () => {
-    // State hooks for various fields
-    const params = useParams()
+    const params = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -18,31 +15,33 @@ const UpdateProduct = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [photo, setPhoto] = useState('');
-    const [id, setId] = useState('')
+    const [id, setId] = useState('');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const [deletingCategory, setDeletingCategory] = useState("");
 
-    //Get Single Product
+    // Fetch single product details
     const getSingleProduct = async () => {
         try {
-            const { data } = await axios.get(`/api/v1/products/get-product/${params.slug}`)
-            setName(data.product.name)
-            setDescription(data.product.description)
-            setPrice(data.product.price)
-            setQuantity(data.product.quantity)
-            setShipping(data.product.shipping)
-            setCategory(data.product.category)
-            setPhoto(data.product.photo)
-            setId(data.product._id)
+            const { data } = await axios.get(`/api/v1/products/get-product/${params.slug}`);
+            setName(data.product.name);
+            setDescription(data.product.description);
+            setPrice(data.product.price);
+            setQuantity(data.product.quantity);
+            setShipping(data.product.shipping);
+            setCategory(data.product.category?._id || '');
+            setPhoto(data.product.photo);
+            setId(data.product._id);
         } catch (error) {
-            console.log(error)
+            console.error('Error fetching product:', error);
+            toast.error('Failed to fetch product details');
         }
-    }
+    };
+
     useEffect(() => {
         getSingleProduct();
     }, []);
-    // Get all categories
+
+    // Fetch all categories
     const getAllCategories = async () => {
         try {
             const { data } = await axios.get('/api/v1/category/getall-category');
@@ -61,8 +60,8 @@ const UpdateProduct = () => {
         getAllCategories();
     }, []);
 
-    // Handle form submission to create a product
-    const handleCreate = async (e) => {
+    // Handle form submission to update a product
+    const handleUpdate = async (e) => {
         e.preventDefault();
         try {
             const productData = new FormData();
@@ -72,50 +71,41 @@ const UpdateProduct = () => {
             productData.append('quantity', quantity);
             productData.append('shipping', shipping);
             productData.append('category', category);
-            photo && productData.append('photo', photo);
+            if (photo) productData.append('photo', photo);
 
-            const { data } = await axios.post('/api/v1/products/create-product', productData);
+            const { data } = await axios.put(`/api/v1/products/update-product/${id}`, productData);
             if (data?.success) {
-                toast.success("Product Updated Successfully");
+                toast.success('Product updated successfully');
                 navigate('/dashboard/admin/products');
             } else {
-                toast.error(data.error || 'Failed to create product');
+                toast.error(data.error || 'Failed to update product');
             }
         } catch (error) {
-            console.error('Error creating product:', error);
-            // Log the error response for debugging
+            console.error('Error updating product:', error);
             if (error.response) {
-                console.error('Error response data:', error.response.data);
-                toast.error(error.response.data.error || 'Something went wrong while creating product');
+                toast.error(error.response.data.error || 'Something went wrong');
             } else {
-                toast.error('Something went wrong while creating product');
+                toast.error('Something went wrong');
             }
         }
     };
 
-    // Reset category and clear related states
-    const resetCategory = () => {
-        setCategory('');
-        setPhoto(''); // Clear photo when resetting category
-    };
-
-    // delete product
+    // Handle product deletion
     const handleDelete = async () => {
         try {
-            let answer = window.confirm('Are you sure you want to delete this product?');
-            if (!answer) return
+            const confirmDelete = window.confirm('Are you sure you want to delete this product?');
+            if (!confirmDelete) return;
+
             const { data } = await axios.delete(`/api/v1/products/delete-product/${id}`);
             if (data.success) {
                 toast.success(data.message);
-                getAllCategories();
-                setDeletingCategory(null);
-                navigate('/dashboard/admin/products')
+                navigate('/dashboard/admin/products');
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
-            console.error('Error deleting category:', error);
-            toast.error('Something went wrong while deleting the category');
+            console.error('Error deleting product:', error);
+            toast.error('Something went wrong while deleting the product');
         }
     };
 
@@ -128,37 +118,32 @@ const UpdateProduct = () => {
                 <div className="w-full p-4 md:p-6">
                     <div className="bg-white p-4 md:p-6 shadow rounded-md">
                         <h1 className="text-xl font-bold mb-4">Update Products</h1>
-
-                        {/* Form for creating a product */}
-                        <form onSubmit={handleCreate}>
-                            {/* Dropdown for Categories */}
+                        <form onSubmit={handleUpdate}>
                             <div className="mt-4 rounded-md space-y-3">
                                 <select
                                     id="category"
-                                    placeholder="Choose the Category"
-
+                                    value={category}
                                     onChange={(e) => setCategory(e.target.value)}
                                     className="block w-full border rounded-md shadow-sm sm:text-sm p-4"
                                 >
-                                    value={category.name}
-                                    <option value="" disabled>Select a category</option>
+                                    <option value="" disabled>
+                                        Select a category
+                                    </option>
                                     {categories.map((cat) => (
                                         <option key={cat._id} value={cat._id}>
                                             {cat.name}
                                         </option>
                                     ))}
                                 </select>
-
-                                {/* File upload section */}
                                 <div className="border block w-full rounded-md shadow-sm sm:text-sm p-4">
                                     <div
                                         className="cursor-pointer"
-                                        onClick={() => fileInputRef.current.click()}  // Trigger file input click
+                                        onClick={() => fileInputRef.current.click()}
                                     >
-                                        {photo ? photo.name : "Upload Photo"}
+                                        {photo ? photo.name : 'Upload Photo'}
                                     </div>
                                     <input
-                                        ref={fileInputRef}  // Attach the ref to the file input
+                                        ref={fileInputRef}
                                         type="file"
                                         name="photo"
                                         accept="image/*"
@@ -183,10 +168,8 @@ const UpdateProduct = () => {
                                                 className="w-32 h-32 object-cover"
                                             />
                                         </div>
-
                                     )}
                                 </div>
-
                                 <div>
                                     <input
                                         type="text"
@@ -201,7 +184,7 @@ const UpdateProduct = () => {
                                         type="text"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        placeholder="Enter the Description"
+                                        placeholder="Enter the description"
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
@@ -210,7 +193,7 @@ const UpdateProduct = () => {
                                         type="number"
                                         value={price}
                                         onChange={(e) => setPrice(e.target.value)}
-                                        placeholder="Enter the Price"
+                                        placeholder="Enter the price (₹)"
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
@@ -219,32 +202,37 @@ const UpdateProduct = () => {
                                         type="number"
                                         value={quantity}
                                         onChange={(e) => setQuantity(e.target.value)}
-                                        placeholder="Enter the Quantity"
+                                        placeholder="Enter the quantity"
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
+                                
                                 <div>
                                     <select
-                                        placeholder="Select Shipping"
+                                        value={shipping}
                                         onChange={(e) => setShipping(e.target.value)}
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     >
-                                        value = {shipping ? "yes" : "no"}
-                                        <option value="" disabled>Select the Shipping</option>
+                                        <option value="" disabled>
+                                            Select shipping
+                                        </option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select>
                                 </div>
-                                <div className=' space-x-5'>
-                                    <button type="submit" className="p-3 border rounded-md shadow-sm sm:text-sm font-bold bg-slate-100 hover:bg-slate-200">
-                                        <h1 className=' text-lg'> Update Product</h1>
+                                <div className="space-x-5">
+                                    <button
+                                        type="submit"
+                                        className="p-3 border rounded-md shadow-sm sm:text-sm font-bold bg-slate-100 hover:bg-slate-200"
+                                    >
+                                        Update Product
                                     </button>
                                     <button
                                         type="button"
-                                        className="p-3 border rounded-md shadow-sm sm:text-sm font-bold bg-red-600 hover:bg-red-700"
-                                        onClick={() => handleDelete(deletingCategory._id)}
+                                        className="p-3 border rounded-md shadow-sm sm:text-sm font-bold bg-red-600 hover:bg-red-700 text-white"
+                                        onClick={handleDelete}
                                     >
-                                        <h1 className=' text-lg text-white'> Delete Product</h1>
+                                        Delete Product
                                     </button>
                                 </div>
                             </div>
@@ -253,7 +241,7 @@ const UpdateProduct = () => {
                 </div>
             </div>
         </Layout>
-    )
-}
+    );
+};
 
-export default UpdateProduct
+export default UpdateProduct;

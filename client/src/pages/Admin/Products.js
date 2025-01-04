@@ -30,28 +30,27 @@ const Products = () => {
                     <AdminMenu />
                 </div>
                 <div className="w-full p-4 md:p-6">
-                    <div className="bg-white p-4 md:p-6 shadow rounded-md">
+                    <div className="bg-white p-4 md:p-6 shadow rounded-md ">
                         <h1 className="text-xl font-bold mb-4">All products lists</h1>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
                             {products?.map((p) => (
-                                <Link key={p._id} to ={`/dashboard/admin/products/${p.slug}`}>
-                                      <div
-                                 
-                                 className="bg-white p-4 shadow rounded-md"
-                             >
-                                <div className='flex justify-center'>
-                                <img src={`/api/v1/products/get-product-photo/${p._id}`} alt={p.name} className='size-48' srcset="" />
-                                </div>
-                                
-                                 <p className="text-xl font-bold mb-2">Name: {p.name}</p>
-                                 <p className="text-gray-600 text-sm mb-4">
-                                     Description: {p.description}
-                                 </p>
-                                
-                             </div>
+                                <Link key={p._id} to={`/dashboard/admin/products/${p.slug}`}>
+                                    <div className="bg-white  shadow-lg rounded-md overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1 border">
+                                        {/* Image Section */}
+                                        <div className="relative border-b p-6">
+                                            <img
+                                                src={`/api/v1/products/get-product-photo/${p._id}`}
+                                                alt={p.name}
+                                                className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                                            />
+                                        </div>
+                                        {/* Description Section */}
+                                        <div className="p-4">
+                                            <h2 className="text-lg font-semibold mb-2 text-gray-800">{p.name}</h2>
+                                            <p className="text-sm text-gray-600 truncate">{p.description}</p>
+                                        </div>
+                                    </div>
                                 </Link>
-                              
                             ))}
                         </div>
                     </div>
