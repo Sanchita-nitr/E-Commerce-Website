@@ -1,116 +1,116 @@
 "use client";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { LuMenu } from "react-icons/lu";
-import { NavLink } from "react-router-dom";
+import { LuMenu, LuX } from "react-icons/lu"; // Added LuX for close icon
+import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import SearchInput from "../Form/SearchInput";
+import useCategory from "../../hooks/useCategory";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false); // State for category dropdown
+  const categories = useCategory();
 
   const handleLogout = () => {
     setAuth({
       ...auth,
       user: null,
-      token: '',
+      token: "",
     });
-    localStorage.removeItem('auth');
-    toast.success('Logout Successfully');
+    localStorage.removeItem("auth");
+    toast.success("Logout Successfully");
   };
 
   return (
-    <div className="shadow-lg w-full shadow-zinc-300 border-b-2 bg-white">
-      <nav className="flex flex-col md:flex-row justify-between items-center py-4 px-6">
-        {/* Left side - Website name */}
+    <div className="shadow-lg w-full shadow-zinc-300 border-b bg-white">
+      <nav className="flex items-center justify-between py-4 px-6">
+        {/* Left Side - Website name */}
         <span className="text-2xl font-bold text-blue-700 hover:text-blue-900 transition duration-300">
           <NavLink to="/">My Website</NavLink>
         </span>
 
-        {/* Mobile Menu and Search Input */}
-        <div className="w-full md:w-auto flex flex-col md:flex-row items-center md:space-x-6">
-          {/* Toggle button for mobile */}
-          <div className="w-full md:w-auto flex justify-end md:hidden">
-            <button
-              className="flex items-center px-2 py-1 border rounded hover:bg-gray-200 transition"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <LuMenu className="text-xl" />
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {isOpen && (
-            <ul className="absolute top-16 right-4 w-48 bg-white shadow-lg rounded-lg z-10">
-              <li className="py-2 px-4 hover:bg-gray-100">
-                <NavLink to="/">Home</NavLink>
-              </li>
-
-              {!auth.user ? (
-                <>
-                  <li className="py-2 px-4 hover:bg-gray-100">
-                    <NavLink to="/register">Register</NavLink>
-                  </li>
-                  <li className="py-2 px-4 hover:bg-gray-100">
-                    <NavLink to="/login">Login</NavLink>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li className="py-2 px-4 hover:bg-gray-100">
-                    <NavLink to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>Dashboard</NavLink>
-                  </li>
-                  <li className="py-2 px-4 hover:bg-gray-100">
-                    <button onClick={handleLogout}>Logout</button>
-                  </li>
-                </>
-              )}
-              <li className="py-2 px-4 hover:bg-gray-100">
-                <NavLink to="/service">Service</NavLink>
-              </li>
-            </ul>
-          )}
-
-          {/* Search Input - Full width on mobile, below the menu */}
-          <div className="w-full md:w-auto mt-4 md:mt-0">
-            <SearchInput />
-          </div>
+        {/* Center - Search Input (Hidden on mobile) */}
+        <div className="hidden md:block w-1/3 -mt-4">
+          <SearchInput />
         </div>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center space-x-6">
-          <li>
-            <NavLink
-              className="text-lg font-medium hover:text-blue-700 transition"
-              to="/"
-            >
-              Home
-            </NavLink>
-          </li>
+        {/* Right Side - Menu Items */}
+        <div className="flex items-center space-x-6">
+          {/* Mobile Toggle Button */}
+          <button
+            className="md:hidden text-2xl focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <LuX /> : <LuMenu />}
+          </button>
 
-          {!auth.user ? (
-            <>
-              <li>
-                <NavLink
-                  className="text-lg font-medium hover:text-blue-700 transition"
-                  to="/register"
-                >
-                  Register
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className="text-lg font-medium hover:text-blue-700 transition"
-                  to="/login"
-                >
-                  Login
-                </NavLink>
-              </li>
-            </>
-          ) : (
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex items-center space-x-6">
+            <li>
+              <NavLink
+                className="text-lg font-medium hover:text-blue-700 transition"
+                to="/"
+              >
+                Home
+              </NavLink>
+            </li>
+
+            {/* Category Dropdown */}
             <li className="relative">
+              <button
+                className="text-lg font-medium hover:text-blue-700 transition"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+              >
+                <Link to={'/'}>
+                <NavLink>
+                Category
+                </NavLink>
+                </Link>
+              
+              </button>
+              {isCategoryOpen && (
+                <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
+                  <li className="p-2 underline underline-offset-4 text-yellow-700">
+                    <NavLink to={'/categories'}>All Categories</NavLink>
+                  </li>
+                  {categories.map((category) => (
+                    <li
+                      key={category.id}
+                      className="p-2 hover:bg-gray-100"
+                    >
+                      <NavLink to={`/category/${category.slug}`} >
+                        {category.name}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+
+            {!auth.user ? (
+              <>
+                <li>
+                  <NavLink
+                    className="text-lg font-medium hover:text-blue-700 transition"
+                    to="/register"
+                  >
+                    Register
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    className="text-lg font-medium hover:text-blue-700 transition"
+                    to="/login"
+                  >
+                    Login
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <li className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="text-lg font-medium hover:text-blue-700 transition"
@@ -118,30 +118,140 @@ const Header = () => {
                 Account
               </button>
               {isDropdownOpen && (
-                <ul className="absolute right-0 bg-white text-gray-700 mt-2 rounded shadow-lg w-40">
+                <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
                   <li className="p-2 hover:bg-gray-100">
-                  
-                    <NavLink to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}>Dashboard</NavLink>
+                    <NavLink
+                      to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+                      className="block"
+                    >
+                      Dashboard
+                    </NavLink>
                   </li>
                   <li className="p-2 hover:bg-gray-100">
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogout} className="block w-full text-left">
+                      Logout
+                    </button>
                   </li>
                 </ul>
               )}
             </li>
-          )}
-          <li>
-            <NavLink
-              className="text-lg font-medium hover:text-blue-700 transition"
-              to="/service"
-            >
-              Service
-            </NavLink>
-          </li>
-        </ul>
+            
+            )}
+            <li>
+              <NavLink
+                className="text-lg font-medium hover:text-blue-700 transition"
+                to="/service"
+              >
+                Service
+              </NavLink>
+            </li>
+          </ul>
+        </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden w-full bg-white shadow-lg py-4 px-6">
+          <ul className="space-y-4">
+            <li>
+              <NavLink
+                className="text-lg font-medium hover:text-blue-700 transition"
+                to="/"
+              >
+                Home
+              </NavLink>
+            </li>
+
+            {/* Mobile Category Dropdown */}
+            <li>
+              <button
+                className="text-lg font-medium hover:text-blue-700 transition w-full text-left"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+              >
+                Category
+              </button>
+              {isCategoryOpen && (
+                <ul className="bg-white shadow-lg rounded mt-2 w-full">
+                  {categories.map((category) => (
+                    <li
+                      key={category.id}
+                      className="p-2 hover:bg-gray-100"
+                    >
+                      <NavLink to={`/category/${category.slug}`}>
+                        {category.name}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+
+            {!auth.user ? (
+              <>
+                <li>
+                  <NavLink
+                    className="text-lg font-medium hover:text-blue-700 transition"
+                    to="/register"
+                  >
+                    Register
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    className="text-lg font-medium hover:text-blue-700 transition"
+                    to="/login"
+                  >
+                    Login
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+               <li className="relative">
+  <button
+    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+    className="text-lg font-medium hover:text-blue-700 transition"
+  >
+    Account
+  </button>
+  {isDropdownOpen && (
+    <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
+      <li className="p-2 hover:bg-gray-100">
+        <NavLink
+          to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+          className="block"
+        >
+          Dashboard
+        </NavLink>
+      </li>
+      <li className="p-2 hover:bg-gray-100">
+        <button onClick={handleLogout} className="block w-full text-left">
+          Logout
+        </button>
+      </li>
+    </ul>
+  )}
+</li>
+              </>
+            )}
+            <li>
+              <NavLink
+                className="text-lg font-medium hover:text-blue-700 transition"
+                to="/service"
+              >
+                Service
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Mobile Search Input - Always visible below header */}
+      <div className="block md:hidden pb-4 -mt-4">
+        <SearchInput />
+      </div>
     </div>
   );
-}
+};
 
 export default Header;

@@ -1,7 +1,9 @@
 
 import fs from "fs";
 import slugify from "slugify";
+import categoryModel from "../models/categoryModel.js";
 import productModel from "../models/productModel.js";
+
 
 // Create Product
 export const createProductController = async (req, res) => {
@@ -302,7 +304,7 @@ export const searchProductController = async (req, res) => {
 
         // Escape special characters in the keyword
         const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        
+
         const results = await productModel.find({
             $or: [
                 { name: { $regex: escapedKeyword, $options: "i" } },
@@ -333,6 +335,64 @@ export const searchProductController = async (req, res) => {
         });
     }
 };
+
+//similar product
+export const similarProductController = async (req, res) => {
+    try {
+        const { pid, cid } = req.params;
+        if (!pid || !cid) {
+            return res.status(400).send({
+                success: false,
+                message: "Product ID and Category ID are required",
+            });
+        }
+
+        const products = await productModel
+            .find({
+                category: cid,
+                _id: { $ne: pid }, // Exclude the current product
+            })
+            .select("-photo") // Exclude the photo field
+            .limit(5) // Limit the results to 5
+            .populate("category");
+
+        res.status(200).send({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        console.error("Error in similar product:", error);
+        res.status(400).send({
+            success: false,
+            message: "Error in similar product",
+            error,
+        });
+    }
+};
+
+//category wise product
+export const categoryWiseProductController = async (req, res) => {
+    try {
+        const category = await categoryModel.findOne({ slug: req.params.slug });
+        const products = await productModel.find({ category: category._id }).populate('category');
+        res.status(200).send({
+            success: true,
+            category,
+            products,
+        });
+    }
+
+    catch (error) {
+        console.error("Error in category wise product:", error);
+        res.status(400).send({
+            success: false,
+            message: "Error in getting product",
+            error,
+        });
+    }
+
+}
+
 
 
 
