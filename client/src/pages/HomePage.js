@@ -1,9 +1,14 @@
 import { Checkbox, Radio } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { AiFillHeart } from "react-icons/ai";
+import { FaRegHeart } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import { Prices } from '../components/Form/Prices';
+import { Prices } from '../components/Form/Prices'; // Ensure this file exists and exports Prices properly
 import Layout from '../components/Layout/Layout';
+import { useCart } from '../context/cart';
+import { useWishlist } from '../context/wishlist';
 
 const HomePage = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -14,7 +19,10 @@ const HomePage = () => {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate()
+    const [wishlist, setWishlist] = useWishlist(); // Wishlist state
+    const navigate = useNavigate();
+    const [cart, setCart] = useCart();
+    
     const getTotal = async () => {
         try {
             const { data } = await axios.get('/api/v1/products/count-product');
@@ -28,11 +36,12 @@ const HomePage = () => {
         getTotal();
     }, []);
 
+    // Fetch products based on the page number
     const loadMore = async () => {
         try {
             setLoading(true);
             const { data } = await axios.get(`/api/v1/products/product-list/${page}`);
-            setProducts([...products, ...data?.products]);
+            setProducts((prevProducts) => [...prevProducts, ...data?.products]);
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -51,6 +60,7 @@ const HomePage = () => {
         '/images/bg5.jpg',
     ];
 
+    // Fetch categories
     const getAllCategories = async () => {
         try {
             const { data } = await axios.get('/api/v1/category/getall-category');
@@ -66,6 +76,7 @@ const HomePage = () => {
         getAllCategories();
     }, []);
 
+    // Fetch products based on filters
     const getAllProducts = async () => {
         try {
             setLoading(true);
@@ -82,6 +93,7 @@ const HomePage = () => {
         getAllProducts();
     }, [page]);
 
+    // Handle filter changes
     const handleFilter = (value, id) => {
         let all = [...checked];
         if (value) {
@@ -112,6 +124,7 @@ const HomePage = () => {
         }
     };
 
+    // Auto slideshow
     useEffect(() => {
         const autoSlide = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
@@ -131,6 +144,22 @@ const HomePage = () => {
         );
     };
 
+    const isInWishlist = (product) => wishlist.some((item) => item._id === product._id);
+    const toggleWishlist = (product) => {
+        let updatedWishlist;
+        if (isInWishlist(product)) {
+            // Remove the product from wishlist
+            updatedWishlist = wishlist.filter((item) => item._id !== product._id);
+            toast.success("Removed from Wishlist");
+        } else {
+            // Add the product to wishlist
+            updatedWishlist = [...wishlist, product];
+            toast.success("Added to Wishlist");
+        }
+        setWishlist(updatedWishlist);
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+    };
+
 
     return (
         <Layout title="All products - E-Commerce">
@@ -142,8 +171,7 @@ const HomePage = () => {
                             key={index}
                             src={image}
                             alt={`Slide ${index}`}
-                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
-                                }`}
+                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
                         />
                     ))}
                 </div>
@@ -165,10 +193,7 @@ const HomePage = () => {
                     {carouselImages.map((_, index) => (
                         <span
                             key={index}
-                            className={`w-3 h-3 rounded-full ${currentSlide === index
-                                ? 'bg-blue-500'
-                                : 'bg-gray-300'
-                                }`}
+                            className={`w-3 h-3 rounded-full ${currentSlide === index ? 'bg-blue-500' : 'bg-gray-300'}`}
                         ></span>
                     ))}
                 </div>
@@ -193,7 +218,7 @@ const HomePage = () => {
                         ))}
                     </div>
                     <h2 className="text-xl font-bold text-gray-800 mt-6 mb-4 border-b pb-2">Filter by Price</h2>
-                    <div className="flex flex-col ">
+                    <div className="flex flex-col">
                         <Radio.Group
                             onChange={(e) => setRadio(e.target.value)}
                             className=""
@@ -219,9 +244,7 @@ const HomePage = () => {
                     </div>
                 </div>
 
-
                 {/* Main Content */}
-
                 <div className="col-span-12 md:col-span-9">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Our Products</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -240,17 +263,31 @@ const HomePage = () => {
                                 <div className="p-4">
                                     <h2 className="text-lg font-semibold text-gray-800">{p.name}</h2>
                                     <p className="text-sm text-gray-600 truncate">{p.description}</p>
-                                    <p className="text-sm text-gray-600 truncate">₹{p.price}</p>
+                                    <div className="flex justify-between items-center mt-2">
+                                        <p className="text-sm text-gray-600">₹{p.price}</p>
+                                        <button
+                                            onClick={() => toggleWishlist(p)}
+                                            type="button"
+                                            className="text-sm text-red-500 hover:text-red-600 transition duration-300"
+                                        >
+                                            {isInWishlist(p) ? <AiFillHeart /> : <FaRegHeart />}
+                                        </button>
+
+                                    </div>
                                     <div className="mt-4">
                                         <button
                                             type="button"
                                             onClick={() => navigate(`/products/${p.slug}`)}
                                             className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
                                         >
-                                            
                                             View Details
                                         </button>
                                         <button
+                                            onClick={() => {
+                                                setCart([...cart, p]);
+                                                localStorage.setItem('cart', JSON.stringify([...cart, p]));
+                                                toast.success("Item added to cart");
+                                            }}
                                             type="button"
                                             className="w-full py-2 mt-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
                                         >
@@ -275,10 +312,9 @@ const HomePage = () => {
                         )}
                     </div>
                 </div>
-
             </div>
         </Layout>
     );
 };
 
-export default HomePage; 
+export default HomePage;

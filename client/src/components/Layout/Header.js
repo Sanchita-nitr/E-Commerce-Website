@@ -6,13 +6,19 @@ import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import SearchInput from "../Form/SearchInput";
 import useCategory from "../../hooks/useCategory";
+import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
+import { useCart } from "../../context/cart";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
+  const [cart] = useCart();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false); // State for category dropdown
   const categories = useCategory();
+
+  // Assuming you have a cart context or state for cart items
+  const [cartItems, setCartItems] = useState(5); // Replace with actual cart count from state or context
 
   const handleLogout = () => {
     setAuth({
@@ -47,6 +53,7 @@ const Header = () => {
             {isOpen ? <LuX /> : <LuMenu />}
           </button>
 
+
           {/* Desktop Menu */}
           <ul className="hidden md:flex items-center space-x-6">
             <li>
@@ -57,6 +64,11 @@ const Header = () => {
                 Home
               </NavLink>
             </li>
+            <li>
+          <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
+            Wishlist
+          </NavLink>
+       </li>
 
             {/* Category Dropdown */}
             <li className="relative">
@@ -65,11 +77,10 @@ const Header = () => {
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
               >
                 <Link to={'/'}>
-                <NavLink>
-                Category
-                </NavLink>
+                  <NavLink>
+                    Category
+                  </NavLink>
                 </Link>
-              
               </button>
               {isCategoryOpen && (
                 <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
@@ -111,31 +122,30 @@ const Header = () => {
               </>
             ) : (
               <li className="relative">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="text-lg font-medium hover:text-blue-700 transition"
-              >
-                Account
-              </button>
-              {isDropdownOpen && (
-                <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
-                  <li className="p-2 hover:bg-gray-100">
-                    <NavLink
-                      to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
-                      className="block"
-                    >
-                      Dashboard
-                    </NavLink>
-                  </li>
-                  <li className="p-2 hover:bg-gray-100">
-                    <button onClick={handleLogout} className="block w-full text-left">
-                      Logout
-                    </button>
-                  </li>
-                </ul>
-              )}
-            </li>
-            
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="text-lg font-medium hover:text-blue-700 transition"
+                >
+                  Account
+                </button>
+                {isDropdownOpen && (
+                  <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
+                    <li className="p-2 hover:bg-gray-100">
+                      <NavLink
+                        to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+                        className="block"
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>
+                    <li className="p-2 hover:bg-gray-100">
+                      <button onClick={handleLogout} className="block w-full text-left">
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </li>
             )}
             <li>
               <NavLink
@@ -146,6 +156,26 @@ const Header = () => {
               </NavLink>
             </li>
           </ul>
+
+          {/* Desktop Cart Icon with Item Count */}
+          <NavLink to="/cart" className="relative">
+            <div className="flex">
+            <PiShoppingCartSimpleDuotone className="text-2xl" />
+            <div className="-ml-1 ">
+              <p className=" -mt-3 border rounded-full px-2">
+              {cart?.length}
+              </p>
+    
+            </div>
+           
+         
+            </div>
+            {/* {cartItems > 0 && (
+              <span className="absolute top-0 right-0 bg-red-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems}
+              </span> */}
+            
+          </NavLink>
         </div>
       </nav>
 
@@ -159,6 +189,11 @@ const Header = () => {
                 to="/"
               >
                 Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
+                Wishlist
               </NavLink>
             </li>
 
@@ -207,31 +242,31 @@ const Header = () => {
               </>
             ) : (
               <>
-               <li className="relative">
-  <button
-    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-    className="text-lg font-medium hover:text-blue-700 transition"
-  >
-    Account
-  </button>
-  {isDropdownOpen && (
-    <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
-      <li className="p-2 hover:bg-gray-100">
-        <NavLink
-          to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
-          className="block"
-        >
-          Dashboard
-        </NavLink>
-      </li>
-      <li className="p-2 hover:bg-gray-100">
-        <button onClick={handleLogout} className="block w-full text-left">
-          Logout
-        </button>
-      </li>
-    </ul>
-  )}
-</li>
+                <li className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="text-lg font-medium hover:text-blue-700 transition"
+                  >
+                    Account
+                  </button>
+                  {isDropdownOpen && (
+                    <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
+                      <li className="p-2 hover:bg-gray-100">
+                        <NavLink
+                          to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+                          className="block"
+                        >
+                          Dashboard
+                        </NavLink>
+                      </li>
+                      <li className="p-2 hover:bg-gray-100">
+                        <button onClick={handleLogout} className="block w-full text-left">
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </li>
               </>
             )}
             <li>
@@ -247,7 +282,7 @@ const Header = () => {
       )}
 
       {/* Mobile Search Input - Always visible below header */}
-      <div className="block md:hidden pb-4 -mt-4">
+      <div className="block md:hidden pb-4 -mt-4 px-5">
         <SearchInput />
       </div>
     </div>

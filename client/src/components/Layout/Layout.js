@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast';
 
 const Layout = ({ children, title, description, keywords, author }) => {
   return (
-    <div className="overflow-visible"> {/* Added overflow-visible to allow dropdown to be seen */}
+    <div className="flex flex-col min-h-screen"> {/* Flexbox for full height layout */}
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="description" content={description} />
@@ -15,7 +15,7 @@ const Layout = ({ children, title, description, keywords, author }) => {
         <title>{title}</title>
       </Helmet>
       <Header />
-      <main>
+      <main className="flex-grow">{/* Allow main content to grow and take remaining space */}
         {children}
         <Toaster />
       </main>
