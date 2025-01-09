@@ -14,7 +14,7 @@
   "author": "Sanchita",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "braintree": "^3.26.0",
     "braintree-web-drop-in-react": "^1.2.1",
@@ -36,5 +36,4 @@
   "engines": {
     "node": "18.x"
   }
-  
 }
