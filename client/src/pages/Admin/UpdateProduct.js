@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminMenu from '../../components/Layout/AdminMenu';
@@ -20,7 +20,7 @@ const UpdateProduct = () => {
     const navigate = useNavigate();
 
     // Fetch single product details
-    const getSingleProduct = async () => {
+    const getSingleProduct = useCallback(async () => {
         try {
             const { data } = await axios.get(`/api/v1/products/get-product/${params.slug}`);
             setName(data.product.name);
@@ -35,14 +35,14 @@ const UpdateProduct = () => {
             console.error('Error fetching product:', error);
             toast.error('Failed to fetch product details');
         }
-    };
+    }, [params.slug]);
 
     useEffect(() => {
         getSingleProduct();
-    }, []);
+    }, [getSingleProduct]);
 
     // Fetch all categories
-    const getAllCategories = async () => {
+    const getAllCategories = useCallback(async () => {
         try {
             const { data } = await axios.get('/api/v1/category/getall-category');
             if (data?.success) {
@@ -54,11 +54,11 @@ const UpdateProduct = () => {
             console.error('Error fetching categories:', error);
             toast.error('Something went wrong while fetching categories');
         }
-    };
+    }, []);
 
     useEffect(() => {
         getAllCategories();
-    }, []);
+    }, [getAllCategories]);
 
     // Handle form submission to update a product
     const handleUpdate = async (e) => {
@@ -156,7 +156,7 @@ const UpdateProduct = () => {
                                         <div className="text-center flex justify-center">
                                             <img
                                                 src={URL.createObjectURL(photo)}
-                                                alt="Product Photo"
+                                                alt={name || 'Product'}
                                                 className="w-32 h-32 object-cover"
                                             />
                                         </div>
@@ -164,7 +164,7 @@ const UpdateProduct = () => {
                                         <div className="text-center flex justify-center">
                                             <img
                                                 src={`/api/v1/products/get-product-photo/${id}`}
-                                                alt="Product Photo"
+                                                alt={name || 'Product'}
                                                 className="w-32 h-32 object-cover"
                                             />
                                         </div>
@@ -206,7 +206,6 @@ const UpdateProduct = () => {
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
-                                
                                 <div>
                                     <select
                                         value={shipping}

@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast';
 
 const Layout = ({ children, title, description, keywords, author }) => {
   return (
-    <div className="flex flex-col min-h-screen"> {/* Flexbox for full height layout */}
+    <div className="flex flex-col min-h-screen"> {/* Flex box for full height layout */}
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="description" content={description} />

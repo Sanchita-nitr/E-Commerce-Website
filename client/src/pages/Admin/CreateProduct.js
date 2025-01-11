@@ -141,7 +141,7 @@ const CreateProduct = () => {
                                         <div className="text-center flex justify-center">
                                             <img
                                                 src={URL.createObjectURL(photo)}
-                                                alt="Product Photo"
+                                                 alt="Preview of the uploaded product image"
                                                 className="w-32 h-32 object-cover"
                                             />
                                         </div>

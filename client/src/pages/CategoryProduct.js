@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 
@@ -9,23 +9,23 @@ const CategoryProduct = () => {
     const [category, setCategory] = useState(null); // Updated: Use null initially
     const navigate = useNavigate()
 
-    const getProductsCategoryWise = async () => {
+    const getProductsCategoryWise = useCallback(async () => {
         try {
             const { data } = await axios.get(
                 `/api/v1/products/category-wise-product/${slug}`
             );
-            setProducts(data?.products || []); // Ensure fallback for empty data
-            setCategory(data?.category || null); // Ensure fallback for empty data
+            setProducts(data?.products || []);
+            setCategory(data?.category || null);
         } catch (error) {
             console.error('Error fetching category-wise products:', error);
         }
-    };
+    }, [slug]);
 
     useEffect(() => {
         if (slug) {
             getProductsCategoryWise();
         }
-    }, [slug]); // Depend only on slug
+    }, [slug, getProductsCategoryWise]); // Depend only on slug
 
     return (
         <Layout title={category ? `${category.name} Products` : 'Category'}>

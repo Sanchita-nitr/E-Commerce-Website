@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { LuMenu, LuX } from "react-icons/lu"; // Added LuX for close icon
-import { NavLink, Link } from "react-router-dom";
-import { useAuth } from "../../context/auth";
-import SearchInput from "../Form/SearchInput";
-import useCategory from "../../hooks/useCategory";
 import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
+import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../../context/auth";
 import { useCart } from "../../context/cart";
+import useCategory from "../../hooks/useCategory";
+import SearchInput from "../Form/SearchInput";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
@@ -18,7 +18,7 @@ const Header = () => {
   const categories = useCategory();
 
   // Assuming you have a cart context or state for cart items
-  const [cartItems, setCartItems] = useState(5); // Replace with actual cart count from state or context
+  // const [cartItems, setCartItems] = useState(5); // Replace with actual cart count from state or context
 
   const handleLogout = () => {
     setAuth({
@@ -65,10 +65,10 @@ const Header = () => {
               </NavLink>
             </li>
             <li>
-          <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
-            Wishlist
-          </NavLink>
-       </li>
+              <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
+                Wishlist
+              </NavLink>
+            </li>
 
             {/* Category Dropdown */}
             <li className="relative">
@@ -147,34 +147,26 @@ const Header = () => {
                 )}
               </li>
             )}
-            <li>
-              <NavLink
-                className="text-lg font-medium hover:text-blue-700 transition"
-                to="/service"
-              >
-                Service
-              </NavLink>
-            </li>
           </ul>
 
           {/* Desktop Cart Icon with Item Count */}
           <NavLink to="/cart" className="relative">
             <div className="flex">
-            <PiShoppingCartSimpleDuotone className="text-2xl" />
-            <div className="-ml-1 ">
-              <p className=" -mt-3 border rounded-full px-2">
-              {cart?.length}
-              </p>
-    
-            </div>
-           
-         
+              <PiShoppingCartSimpleDuotone className="text-2xl" />
+              <div className="-ml-1 ">
+                <p className=" -mt-3 border rounded-full px-2">
+                  {cart?.length}
+                </p>
+
+              </div>
+
+
             </div>
             {/* {cartItems > 0 && (
               <span className="absolute top-0 right-0 bg-red-600 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems}
               </span> */}
-            
+
           </NavLink>
         </div>
       </nav>
@@ -269,14 +261,6 @@ const Header = () => {
                 </li>
               </>
             )}
-            <li>
-              <NavLink
-                className="text-lg font-medium hover:text-blue-700 transition"
-                to="/service"
-              >
-                Service
-              </NavLink>
-            </li>
           </ul>
         </div>
       )}
