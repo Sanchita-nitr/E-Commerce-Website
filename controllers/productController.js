@@ -59,7 +59,7 @@ export const createProductController = async (req, res) => {
 
         await product.save();
 
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "Product created successfully",
             product,
@@ -145,7 +145,7 @@ export const updateProductController = async (req, res) => {
 
         await product.save();
 
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "Product updated successfully",
             product,
@@ -490,7 +490,7 @@ export const getAllOrdersController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error WHile Geting Orders",
+            message: "Error WHile Getting Orders",
             error,
         });
     }
@@ -511,7 +511,7 @@ export const orderStatusController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error While Updateing Order",
+            message: "Error While Updating Order",
             error,
         });
     }
