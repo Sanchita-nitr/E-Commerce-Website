@@ -29,9 +29,12 @@ app.use('/api/v1/category', categoryRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use(express.static(path.join(__dirname, './client/build')))
 
+
 const port = process.env.PORT || 8080;
 
-app.use('*',function(req,res){
+app.get('/', (req, res) => res.send('Hello World!'));
+
+app.use('*',(req,res)=>{
     res.sendFile(path.join(__dirname, './client/build/index.html'));
 })
 app.listen(port, () => console.log(`Server is running in ${process.env.DEV_MODE} mode on port ${port}!`.bgGreen.blue));
