@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminMenu from '../../components/Layout/AdminMenu';
@@ -20,7 +20,7 @@ const UpdateProduct = () => {
     const navigate = useNavigate();
 
     // Fetch single product details
-    const getSingleProduct = useCallback(async () => {
+    const getSingleProduct = async () => {
         try {
             const { data } = await axios.get(`/api/v1/products/get-product/${params.slug}`);
             setName(data.product.name);
@@ -35,14 +35,14 @@ const UpdateProduct = () => {
             console.error('Error fetching product:', error);
             toast.error('Failed to fetch product details');
         }
-    }, [params.slug]);
+    };
 
     useEffect(() => {
         getSingleProduct();
     }, [getSingleProduct]);
 
     // Fetch all categories
-    const getAllCategories = useCallback(async () => {
+    const getAllCategories = async () => {
         try {
             const { data } = await axios.get('/api/v1/category/getall-category');
             if (data?.success) {
@@ -54,7 +54,7 @@ const UpdateProduct = () => {
             console.error('Error fetching categories:', error);
             toast.error('Something went wrong while fetching categories');
         }
-    }, []);
+    };
 
     useEffect(() => {
         getAllCategories();
