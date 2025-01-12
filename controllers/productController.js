@@ -80,7 +80,7 @@ export const getProductController = async (req, res) => {
         const products = await productModel.find({})
             .populate('category')
             .select("-photo")
-            .limit(12)
+            // .limit(12)
             .sort({ createdAt: -1 });
 
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

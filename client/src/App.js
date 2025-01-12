@@ -62,8 +62,6 @@ function App() {
         <Route path="/policy" element={<Policy />} />
         <Route path="*" element={<PagenotFound/>} />
       </Routes>
-
-
     </>
   );
 }

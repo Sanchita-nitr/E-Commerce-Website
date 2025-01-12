@@ -33,7 +33,7 @@ const UpdateProduct = () => {
             setId(data.product._id);
         } catch (error) {
             console.error('Error fetching product:', error);
-            toast.error('Failed to fetch product details');
+            // toast.error('Failed to fetch product details');
         }
     };
 
@@ -75,7 +75,7 @@ const UpdateProduct = () => {
 
             const { data } = await axios.put(`/api/v1/products/update-product/${id}`, productData);
             if (data?.success) {
-                toast.success('Product updated successfully');
+                // toast.success('Product updated successfully');
                 navigate('/dashboard/admin/products');
             } else {
                 toast.error(data.error || 'Failed to update product');
@@ -92,22 +92,24 @@ const UpdateProduct = () => {
 
     // Handle product deletion
     const handleDelete = async () => {
+        console.log('Product ID:', id); // Debugging step
         try {
             const confirmDelete = window.confirm('Are you sure you want to delete this product?');
             if (!confirmDelete) return;
-
+    
             const { data } = await axios.delete(`/api/v1/products/delete-product/${id}`);
             if (data.success) {
                 toast.success(data.message);
                 navigate('/dashboard/admin/products');
             } else {
-                toast.error(data.message);
+                toast.error(data.message || 'Failed to delete product');
             }
         } catch (error) {
             console.error('Error deleting product:', error);
-            toast.error('Something went wrong while deleting the product');
+            toast.error(error.response?.data?.message || 'Something went wrong');
         }
     };
+    
 
     return (
         <Layout title={'Dashboard - Update Products'}>
