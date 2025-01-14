@@ -22,9 +22,16 @@ const AdminOrders = () => {
   const getAllOrders = async () => {
     try {
       const { data } = await axios.get("/api/v1/auth/all-orders");
-      setOrders(data);
+      // Validate the response to ensure it's an array
+      if (Array.isArray(data)) {
+        setOrders(data);
+      } else {
+        console.error("Unexpected response format:", data);
+        setOrders([]);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching orders:", error);
+      setOrders([]); // Ensure orders is reset to an empty array on error
     }
   };
 
@@ -53,13 +60,9 @@ const AdminOrders = () => {
         {/* Orders Section */}
         <div className="md:w-3/4 p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">All Orders</h1>
-
-          {orders?.length > 0 ? (
+          {Array.isArray(orders) && orders.length > 0 ? (
             orders.map((order, index) => (
-              <div
-                key={order._id}
-                className="bg-white rounded-lg shadow-md p-4 mb-6"
-              >
+              <div key={order._id} className="bg-white rounded-lg shadow-md p-4 mb-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold text-gray-700">
                     Order #{index + 1}

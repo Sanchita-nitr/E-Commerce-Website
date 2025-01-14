@@ -24,14 +24,14 @@ import WishlistPage from './pages/WishlistPage';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import Profile from './pages/user/UserProfile';
 import Dashboard from './pages/user/UserDashboard';
-import Orders from './pages/user/Orders';
-import Profile from './pages/user/Profile';
+import Orders from './pages/user/UserOrders';
 
 function App() {
   return (
     <>
-    <Routes>
+      <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<Search />} />
         <Route path='/paymentdetails' element={<PaymentDetails />} />
@@ -42,9 +42,9 @@ function App() {
         <Route path="/category/:slug" element={<CategoryProduct />} />
         <Route path="/dashboard" element={<PrivateRoute />}>
           <Route>
-          <Route path="user" element={<Dashboard />} />
-          <Route path="user/profile" element={<Profile />} />
-          <Route path="user/orders" element={<Orders />} />
+            <Route path="user" element={<Dashboard />} />
+            <Route path="user/profile" element={<Profile />} />
+            <Route path="user/orders" element={<Orders />} />
           </Route>
         </Route>
 
@@ -58,14 +58,14 @@ function App() {
           <Route path="admin/orders" element={<AdminOrders />} />
         </Route>
 
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/policy" element={<Policy />} />
-          <Route path="*" element={<PagenotFound />} />
-    </Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/policy" element={<Policy />} />
+        <Route path="*" element={<PagenotFound />} />
+      </Routes>
     </>
   );
 }

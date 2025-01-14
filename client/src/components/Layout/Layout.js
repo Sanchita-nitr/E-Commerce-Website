@@ -4,9 +4,15 @@ import Footer from './Footer';
 import Header from './Header';
 import { Toaster } from 'react-hot-toast';
 
-const Layout = ({ children, title, description, keywords, author }) => {
+const Layout = ({ 
+  children, 
+  title = "E-commerce Website Shopping", 
+  description = "Fullstack Project", 
+  keywords = "react,mongodb,tailwindcss", 
+  author = "Sanchita Priyadarshinee" 
+}) => {
   return (
-    <div className="flex flex-col min-h-screen"> {/* Flex box for full height layout */}
+    <div className="flex flex-col min-h-screen">
       <Helmet>
         <meta charSet="utf-8" />
         <meta name="description" content={description} />
@@ -15,20 +21,13 @@ const Layout = ({ children, title, description, keywords, author }) => {
         <title>{title}</title>
       </Helmet>
       <Header />
-      <main className="flex-grow">{/* Allow main content to grow and take remaining space */}
+      <Toaster />
+      <main className="flex-grow">
         {children}
-        <Toaster />
       </main>
       <Footer />
     </div>
   );
-};
-
-Layout.defaultProps = {
-  title: "E-commerce Website Shopping",
-  description: "Fullstack Project",
-  keywords: "react,mongodb,tailwindcss",
-  author: "Sanchita Priyadarshinee",
 };
 
 export default Layout;

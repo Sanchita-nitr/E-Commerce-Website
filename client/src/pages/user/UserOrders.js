@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect } from "react";
-import UserMenu from "../../components/Layout/UserMenu";
-import Layout from "./../../components/Layout/Layout";
 import axios from "axios";
-import { useAuth } from "../../context/auth";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import Layout from "../../components/Layout/Layout";
+import UserMenu from "../../components/Layout/UserMenu";
+import { useAuth } from "../../context/auth";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
