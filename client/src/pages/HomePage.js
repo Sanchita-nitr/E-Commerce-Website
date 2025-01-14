@@ -55,7 +55,7 @@ const HomePage = () => {
     }, [page]);
 
     const carouselImages = [
-        '/images/about.jpg',
+        // '/images/about.jpg',
         '/images/bg2.png',
         '/images/bg5.jpg',
     ];
