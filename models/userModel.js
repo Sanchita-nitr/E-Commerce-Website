@@ -33,6 +33,5 @@ const userSchema = new mongoose.Schema({
         default: 0
     }
 }, { timestamps: true });
-
-
 export default mongoose.model('shopping', userSchema)
+// export default mongoose.model('website', userSchema)

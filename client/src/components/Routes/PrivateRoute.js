@@ -11,14 +11,7 @@ export default function PrivateRoute(){
 
     useEffect(()=>{
         const authCheck = async()=>{
-            const res = await axios.get('/api/v1/auth/user-auth'
-            // ,{
-            //     headers:{
-            //         "Authorization":auth?.token
-            //     }
-
-            // }
-            )
+            const res = await axios.get('/api/v1/auth/user-auth')
             if(res.data.ok){
                 setOk(true)
             }
@@ -29,5 +22,5 @@ export default function PrivateRoute(){
         if(auth?.token)authCheck()
     },[auth?.token])
 
-    return ok? <Outlet/> : <Spinner/>;
+    return ok ? <Outlet /> : <Spinner path=" " />;
 }

@@ -45,7 +45,7 @@ export const registerController = async (req, res) => {
             password: hashedPassword,
             answer
         }).save();
-        res.status(201).send({
+        res.status(200).send({
             success: true,
             message: "User Registered successfully",
             user,
@@ -155,38 +155,49 @@ export const testController = (req, res) => {
     }
 
 };
-
-//update prfole
 export const updateProfileController = async (req, res) => {
     try {
         const { name, email, password, address, phone } = req.body;
-        const user = await userModel.findById(req.user._id);
-        //password
-        if (password && password.length < 6) {
-            return res.json({ error: "Passsword is required and 6 character long" });
+
+        // Check if user is authenticated
+        if (!req.user || !req.user._id) {
+            return res.status(400).json({ error: "Unauthorized request. User ID missing." });
         }
-        const hashedPassword = password ? await hashPassword(password) : undefined;
+
+        // Fetch user from database
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // Optional: Hash password if provided
+        let hashedPassword = user.password;
+        if (password && password.length >= 6) {
+            hashedPassword = await hashPassword(password);
+        } else if (password && password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters long." });
+        }
+
+        // Update user details
         const updatedUser = await userModel.findByIdAndUpdate(
             req.user._id,
             {
                 name: name || user.name,
-                password: hashedPassword || user.password,
-                phone: phone || user.phone,
+                email: email || user.email, // Ensure email isn't accidentally modified
+                password: hashedPassword,
                 address: address || user.address,
+                phone: phone || user.phone,
             },
-            { new: true }
+            { new: true } // Return the updated user document
         );
-        res.status(200).send({
+
+        res.status(200).json({
             success: true,
-            message: "Profile Updated SUccessfully",
+            message: "Profile updated successfully.",
             updatedUser,
         });
     } catch (error) {
-        console.log(error);
-        res.status(400).send({
-            success: false,
-            message: "Error WHile Update profile",
-            error,
-        });
+        console.error("Error updating profile:", error.message);
+        res.status(500).json({ error: "Internal Server Error. Unable to update profile." });
     }
 };

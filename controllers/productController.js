@@ -282,17 +282,28 @@ export const countProductController = async (req, res) => {
 //productList
 export const productListController = async (req, res) => {
     try {
-        const perPage = 12
-        const page = req.params.page ? req.params.page : 1;
-        const products = await productModel.find({}).select("-photo").skip((page - 1)).limit(perPage).sort({ createdAt: -1 })
+        const perPage = 12; // Number of products per page
+        const page = parseInt(req.params.page, 10) || 1; // Current page number (default to 1)
+
+        // Fetch products with pagination
+        const products = await productModel
+            .find({})
+            .select("-photo") // Exclude photo field
+            .skip((page - 1) * perPage) // Skip products for previous pages
+            .limit(perPage) // Limit to the specified number of products per page
+            .sort({ createdAt: -1 }); // Sort by creation date (newest first)
+
+        const totalProducts = await productModel.countDocuments(); // Total number of products
+
         res.status(200).send({
             success: true,
             products,
-
-        })
-    }
-    catch (error) {
-        console.log(error);
+            totalProducts,
+            totalPages: Math.ceil(totalProducts / perPage),
+            currentPage: page,
+        });
+    } catch (error) {
+        console.error(error);
         res.status(400).send({
             success: false,
             message: "Error in Product Per Page",
@@ -300,6 +311,7 @@ export const productListController = async (req, res) => {
         });
     }
 };
+
 
 // search Product
 export const searchProductController = async (req, res) => {

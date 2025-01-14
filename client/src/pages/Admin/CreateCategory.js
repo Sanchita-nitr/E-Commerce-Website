@@ -72,6 +72,7 @@ const CreateCategory = () => {
     useEffect(() => {
         getAllCategories();
     }, []);
+    
 
     return (
         <Layout title={'Dashboard - Categories'}>

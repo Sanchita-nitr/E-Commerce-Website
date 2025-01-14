@@ -18,11 +18,13 @@ const Profile = () => {
 
   // get user data
   useEffect(() => {
-    const { email, name, phone, address } = auth?.user;
-    setName(name);
-    setPhone(phone);
-    setEmail(email);
-    setAddress(address);
+    if (auth?.user) {
+      const { email, name, phone, address } = auth.user;
+      setName(name || "");
+      setPhone(phone || "");
+      setEmail(email || "");
+      setAddress(address || "");
+    }
   }, [auth?.user]);
 
   // form function
@@ -36,24 +38,25 @@ const Profile = () => {
         phone,
         address,
       });
-      if (data?.error) {
-        toast.error(data?.error);
-      } else {
-        setAuth({ ...auth, user: data?.updatedUser });
-        let ls = localStorage.getItem("auth");
-        ls = JSON.parse(ls);
+      if (data?.success) {
+        // Update auth context and local storage
+        setAuth({ ...auth, user: data.updatedUser });
+        const ls = JSON.parse(localStorage.getItem("auth"));
         ls.user = data.updatedUser;
         localStorage.setItem("auth", JSON.stringify(ls));
-        toast.success("Profile Updated Successfully");
+
+        toast.success(data.message || "Profile updated successfully!");
+      } else {
+        toast.error(data.message || "Error updating profile");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      console.error(error);
+      toast.error("Something went wrong while updating profile");
     }
   };
 
   return (
-    <Layout title={"Dashboard - Profile"}>
+    <Layout title="Dashboard - Profile">
       <div className="flex flex-col sm:flex-row min-h-screen">
         {/* User Menu */}
         <div className="bg-gray-100 min-w-max">
@@ -66,9 +69,7 @@ const Profile = () => {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Profile</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label >
-                  Full Name
-                </label>
+                <label>Full Name</label>
                 <input
                   type="text"
                   value={name}
@@ -78,73 +79,45 @@ const Profile = () => {
                 />
               </div>
               <div>
-                <label>
-                  Email
-                </label>
+                <label>Email</label>
                 <input
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your Email"
-                                required
-                                disabled
-                                className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
-                            />
+                  value={email}
+                  type="email"
+                  disabled
+                  className="border rounded p-3 w-full bg-slate-100 shadow-gray-500 shadow-sm"
+                />
               </div>
               <div>
-                <label>
-                  Password
-                </label>
-       
-                  <input
+                <label>Password</label>
+                <input
                   type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter Your password"
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
-              />
+                  placeholder="Enter Your Password"
+                />
               </div>
               <div>
-                <label >
-                  Phone Number
-                </label>
-                <div>
-                  <input
-                    type="text"
-                    id="mobile"
-                    name="mobile"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    maxLength={10}
-                    placeholder="Enter Your Phone Number"
-                    pattern="^[0-9]{10}$"
-                    title="Enter a valid 10-digit mobile number"
-                    required
-                    className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label>
-                  Address
-                </label>
+                <label>Phone Number</label>
                 <input
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                type="text"
-                                id="address"
-                                name="address"
-                                placeholder="Enter Your Address"
-                                required
-                                className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
-                            />
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  maxLength={10}
+                  pattern="^[0-9]{10}$"
+                  className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
+                  placeholder="Enter Your Phone Number"
+                />
               </div>
-
+              <div>
+                <label>Address</label>
+                <input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="border rounded p-3 w-full bg-slate-50 hover:bg-slate-100 shadow-gray-500 shadow-sm"
+                  placeholder="Enter Your Address"
+                />
+              </div>
               <button
                 type="submit"
                 className="w-full py-3 px-6 rounded-md text-white bg-blue-500 hover:bg-blue-600 transition"

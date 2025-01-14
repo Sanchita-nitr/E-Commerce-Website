@@ -15,6 +15,7 @@ const Spinner = ({ path = "login" }) => {
         count === 0 && navigate(`/${path}`, {
             state: location.pathname
         })
+
         return () =>
             clearInterval(interval)
 

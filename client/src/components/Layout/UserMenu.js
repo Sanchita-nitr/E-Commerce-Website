@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 const UserMenu = () => {
     return (
         <div className="border-r border-gray-300 max-h-screen px-4 py-6 bg-gray-100">
-            <h1 className="text-xl font-bold mb-6 text-center">Admin Panel</h1>
+            <h1 className="text-xl font-bold mb-6 text-center">User Panel</h1>
             <ul className="space-y-4">
                 <li>
                     <NavLink

@@ -10,7 +10,7 @@ const Users = () => {
                 </div>
                 <div className=" w-full p-4 md:p-6">
                     <div className="bg-white p-4 md:p-6 shadow rounded-md">  
-                    <h1>user</h1>
+                    <h1>User</h1>
                     </div>
                 </div>
             </div>

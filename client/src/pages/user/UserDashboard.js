@@ -1,40 +1,11 @@
-// import React from 'react'
-// import Layout from '../../components/Layout/Layout'
-// import AdminMenu from '../../components/Layout/AdminMenu'
 
-
-// const AdminDashboard = () => {
-//   return (
-
-      
-//       <Layout>
-//          <h1>AdminDashboard</h1>
-//          <div className='container-fluid '>
-//           <div className='row'>
-//             <div className=' col-md-3'>
-//               <AdminMenu/>
-
-//             </div>
-//             <div className='col-md-9'>Content</div>
-
-//           </div>
-
-//          </div>
-
-//       </Layout>
-
-//   )
-// }
-
-// export default AdminDashboard
 import React, { useEffect } from 'react';
 import Layout from '../../components/Layout/Layout';
-
 import { useAuth } from '../../context/auth';
 import { useNavigate } from 'react-router-dom';
 import UserMenu from '../../components/Layout/UserMenu';
 
-const Dashboard = () => {
+const UserDashboard = () => {
     const [auth] = useAuth();
     const navigate = useNavigate();
 
@@ -45,7 +16,7 @@ const Dashboard = () => {
     }, [auth, navigate]);
 
     return (
-        <Layout title={'Dashboard'}>
+        <Layout title={'User-Dashboard'}>
             <div className="flex flex-col sm:flex-row min-h-screen">
                 {/* Sidebar */}
                 <div className="bg-gray-100">
@@ -65,4 +36,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default UserDashboard;

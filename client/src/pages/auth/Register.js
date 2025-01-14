@@ -27,7 +27,7 @@ const Register = () => {
 
             if (res.data.success) {
                 toast.success(res.data.message);
-                navigate('/login'); // Navigate only when registration is successful
+                navigate('/'); // Navigate only when registration is successful
             } else {
                 toast.error(res.data.message);
             }
