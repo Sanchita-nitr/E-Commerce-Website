@@ -15,6 +15,7 @@ const UpdateProduct = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [photo, setPhoto] = useState('');
+    const [photoUrl, setPhotoUrl] = useState(''); // New state for photo URL
     const [id, setId] = useState('');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const UpdateProduct = () => {
             setShipping(data.product.shipping);
             setCategory(data.product.category?._id || '');
             setPhoto(data.product.photo);
+            setPhotoUrl(data.product.photoUrl || ''); // Set photo URL
             setId(data.product._id);
         } catch (error) {
             console.error('Error fetching product:', error);
@@ -72,6 +74,7 @@ const UpdateProduct = () => {
             productData.append('shipping', shipping);
             productData.append('category', category);
             if (photo) productData.append('photo', photo);
+            if (photoUrl) productData.append('photoUrl', photoUrl); // Append photo URL
 
             const { data } = await axios.put(`${process.env.REACT_APP_API}/api/v1/products/update-product/${id}`, productData);
             if (data?.success) {
@@ -96,7 +99,7 @@ const UpdateProduct = () => {
         try {
             const confirmDelete = window.confirm('Are you sure you want to delete this product?');
             if (!confirmDelete) return;
-    
+
             const { data } = await axios.delete(`/api/v1/products/delete-product/${id}`);
             if (data.success) {
                 toast.success(data.message);
@@ -109,7 +112,6 @@ const UpdateProduct = () => {
             toast.error(error.response?.data?.message || 'Something went wrong');
         }
     };
-    
 
     return (
         <Layout title={'Dashboard - Update Products'}>
@@ -221,6 +223,15 @@ const UpdateProduct = () => {
                                         <option value="0">No</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <input
+                                        type="url"
+                                        value={photoUrl}
+                                        onChange={(e) => setPhotoUrl(e.target.value)}
+                                        placeholder="Enter the Photo URL"
+                                        className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
+                                    />
+                                </div>
                                 <div className="space-x-5">
                                     <button
                                         type="submit"
@@ -243,6 +254,6 @@ const UpdateProduct = () => {
             </div>
         </Layout>
     );
-};
+                                    };
 
 export default UpdateProduct;

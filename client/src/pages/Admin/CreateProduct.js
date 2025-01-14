@@ -14,6 +14,7 @@ const CreateProduct = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [photo, setPhoto] = useState('');
+    const [photoUrl, setPhotoUrl] = useState(''); // New state for photo URL
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
@@ -60,6 +61,7 @@ const CreateProduct = () => {
             productData.append('shipping', shipping);
             productData.append('category', category);
             if (photo) productData.append('photo', photo);
+            if (photoUrl) productData.append('photoUrl', photoUrl); // Append photo URL
 
             const { data } = await axios.post('/api/v1/products/create-product', productData);
             if (data?.success) {
@@ -82,6 +84,7 @@ const CreateProduct = () => {
     const resetCategory = () => {
         setCategory('');
         setPhoto('');
+        setPhotoUrl(''); // Reset photo URL
     };
 
     return (
@@ -141,7 +144,7 @@ const CreateProduct = () => {
                                         <div className="text-center flex justify-center">
                                             <img
                                                 src={URL.createObjectURL(photo)}
-                                                 alt="Preview of the uploaded product image"
+                                                alt="Preview of the uploaded product image"
                                                 className="w-32 h-32 object-cover"
                                             />
                                         </div>
@@ -199,6 +202,16 @@ const CreateProduct = () => {
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="url"
+                                        value={photoUrl}
+                                        onChange={(e) => setPhotoUrl(e.target.value)}
+                                        placeholder="Enter the Photo URL"
+                                        className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
+                                    />
                                 </div>
 
                                 <div>
