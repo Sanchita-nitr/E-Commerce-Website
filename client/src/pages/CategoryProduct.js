@@ -12,7 +12,7 @@ const CategoryProduct = () => {
     const getProductsCategoryWise = useCallback(async () => {
         try {
             const { data } = await axios.get(
-                `/api/v1/products/category-wise-product/${slug}`
+                `${process.env.REACT_APP_API}/api/v1/products/category-wise-product/${slug}`
             );
             setProducts(data?.products || []);
             setCategory(data?.category || null);

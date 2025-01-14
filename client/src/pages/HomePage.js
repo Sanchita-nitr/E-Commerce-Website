@@ -25,7 +25,7 @@ const HomePage = () => {
     
     const getTotal = async () => {
         try {
-            const { data } = await axios.get('/api/v1/products/count-product');
+            const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/products/count-product`);
             setTotal(data?.total);
         } catch (err) {
             console.error(err);
@@ -40,7 +40,7 @@ const HomePage = () => {
     const loadMore = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`/api/v1/products/product-list/${page}`);
+            const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/products/product-list/${page}`);
             setProducts((prevProducts) => [...prevProducts, ...data?.products]);
             setLoading(false);
         } catch (error) {
@@ -63,7 +63,7 @@ const HomePage = () => {
     // Fetch categories
     const getAllCategories = async () => {
         try {
-            const { data } = await axios.get('/api/v1/category/getall-category');
+            const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/category/getall-category`);
             if (data?.success) {
                 setCategories(data.category);
             }
@@ -80,7 +80,7 @@ const HomePage = () => {
     const getAllProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`/api/v1/products/product-list/${page}`);
+            const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/products/product-list/${page}`);
             setLoading(false);
             setProducts(data.products);
         } catch (error) {
@@ -114,7 +114,7 @@ const HomePage = () => {
 
     const filterProduct = async () => {
         try {
-            const { data } = await axios.post('/api/v1/products/filter-product', {
+            const { data } = await axios.post(`${process.env.REACT_APP_API}/api/v1/products/filter-product`, {
                 checked,
                 radio,
             });

@@ -73,7 +73,7 @@ const UpdateProduct = () => {
             productData.append('category', category);
             if (photo) productData.append('photo', photo);
 
-            const { data } = await axios.put(`/api/v1/products/update-product/${id}`, productData);
+            const { data } = await axios.put(`${process.env.REACT_APP_API}/api/v1/products/update-product/${id}`, productData);
             if (data?.success) {
                 // toast.success('Product updated successfully');
                 navigate('/dashboard/admin/products');

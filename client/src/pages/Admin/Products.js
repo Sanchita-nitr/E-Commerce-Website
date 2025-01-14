@@ -10,7 +10,7 @@ const Products = () => {
 
     const getAllProducts = async () => {
         try {
-            const { data } = await axios.get('/api/v1/products/get-product');
+            const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/products/get-product`);
             console.log('Fetched Products:', data.products);
             setProducts(data.products);
         } catch (error) {
@@ -39,7 +39,7 @@ const Products = () => {
                                         {/* Image Section */}
                                         <div className="relative border-b p-6">
                                             <img
-                                                src={`/api/v1/products/get-product-photo/${p._id}`}
+                                                src={`${process.env.REACT_APP_API}/api/v1/products/get-product-photo/${p._id}`}
                                                 alt={p.name}
                                                 className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
                                             />
