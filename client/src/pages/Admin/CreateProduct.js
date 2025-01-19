@@ -250,25 +250,11 @@ const CreateProduct = () => {
     const [photoUrl, setPhotoUrl] = useState(''); 
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const [availableImages, setAvailableImages] = useState([]);
 
-    const getAvailableImages = async () => {
-        try {
-            const { data } = await axios.get('/api/v1/images/available-images');
-            if (data?.success) {
-                setAvailableImages(data.images); // Assume the API returns an array of image filenames.
-            } else {
-                toast.error('Failed to fetch available images');
-            }
-        } catch (error) {
-            console.error('Error fetching available images:', error);
-            toast.error('Something went wrong while fetching images');
-        }
-    };
+     const availableImages = [
+        '/images/6786d8046c99d1db7217c8a9.png',
+    ];
     
-    useEffect(() => {
-        getAvailableImages();
-    }, []);
 
     const formatINR = (value) => {
         return new Intl.NumberFormat('en-IN', {
