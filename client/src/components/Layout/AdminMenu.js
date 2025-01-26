@@ -10,7 +10,7 @@ const AdminMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/admin/create-category"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Create Category
                     </NavLink>
@@ -18,7 +18,7 @@ const AdminMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/admin/create-product"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Create Product
                     </NavLink>
@@ -26,7 +26,7 @@ const AdminMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/admin/products"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Products
                     </NavLink>
@@ -34,7 +34,7 @@ const AdminMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/admin/orders"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Orders
                     </NavLink>
@@ -42,7 +42,7 @@ const AdminMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/admin/users"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Users
                     </NavLink>
