@@ -34,7 +34,7 @@ const Header = () => {
     <div className="shadow-lg w-full shadow-zinc-300 border-b bg-white">
       <nav className="flex items-center justify-between py-4 px-6">
         {/* Left Side - Website name */}
-        <span className="text-2xl font-bold text-blue-700 hover:text-blue-900 transition duration-300">
+        <span className="lg:text-2xl md:text-xl font-bold text-blue-900 hover:text-blue-950 transition duration-300">
           <NavLink to="/">My Website</NavLink>
         </span>
 
@@ -55,17 +55,17 @@ const Header = () => {
 
 
           {/* Desktop Menu */}
-          <ul className="hidden md:flex items-center space-x-6">
+          <ul className="hidden md:flex items-center lg:space-x-6 md:space-x-3">
             <li>
               <NavLink
-                className="text-lg font-medium hover:text-blue-700 transition"
+                className="text-lg font-medium tracking-wide hover:text-blue-900 transition"
                 to="/"
               >
                 Home
               </NavLink>
             </li>
             <li>
-              <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
+              <NavLink className="text-lg tracking-wide font-medium hover:text-blue-900 transition" to="/wishlist">
                 Wishlist
               </NavLink>
             </li>
@@ -73,7 +73,7 @@ const Header = () => {
             {/* Category Dropdown */}
             <li className="relative">
               <button
-                className="text-lg font-medium hover:text-blue-700 transition"
+                className="text-lg font-medium tracking-wide hover:text-blue-900 transition"
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
               >
                 <Link to={'/'}>
@@ -84,7 +84,7 @@ const Header = () => {
               </button>
               {isCategoryOpen && (
                 <ul className="absolute bg-white shadow-lg rounded mt-2 w-40 z-50">
-                  <li className="p-2 underline underline-offset-4 text-yellow-700">
+                  <li className="p-2 underline underline-offset-4 text-yellow-900">
                     <NavLink to={'/categories'}>All Categories</NavLink>
                   </li>
                   {categories.map((category) => (
@@ -105,7 +105,7 @@ const Header = () => {
               <>
                 <li>
                   <NavLink
-                    className="text-lg font-medium hover:text-blue-700 transition"
+                    className="text-lg font-medium hover:text-blue-900 transition"
                     to="/register"
                   >
                     Register
@@ -113,7 +113,7 @@ const Header = () => {
                 </li>
                 <li>
                   <NavLink
-                    className="text-lg font-medium hover:text-blue-700 transition"
+                    className="text-lg font-medium hover:text-blue-900 transition"
                     to="/login"
                   >
                     Login
@@ -124,7 +124,7 @@ const Header = () => {
               <li className="relative">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="text-lg font-medium hover:text-blue-700 transition"
+                  className="text-lg font-medium tracking-wide hover:text-blue-900 transition"
                 >
                   Account
                 </button>
@@ -147,21 +147,21 @@ const Header = () => {
                 )}
               </li>
             )}
+
+            <NavLink to="/cart" className="relative">
+              <div className="flex">
+                <PiShoppingCartSimpleDuotone className="text-2xl" />
+                <div className="-ml-1 ">
+                  <p className=" -mt-3 border rounded-full px-2">
+                    {cart?.length}
+                  </p>
+
+                </div>
+              </div>
+
+            </NavLink>
           </ul>
 
-          {/* Desktop Cart Icon with Item Count */}
-          <NavLink to="/cart" className="relative">
-            <div className="flex">
-              <PiShoppingCartSimpleDuotone className="text-2xl" />
-              <div className="-ml-1 ">
-                <p className=" -mt-3 border rounded-full px-2">
-                  {cart?.length}
-                </p>
-
-              </div>
-            </div>
-
-          </NavLink>
         </div>
       </nav>
 
@@ -171,14 +171,14 @@ const Header = () => {
           <ul className="space-y-4">
             <li>
               <NavLink
-                className="text-lg font-medium hover:text-blue-700 transition"
+                className="text-lg font-medium tracking-wide hover:text-blue-900 transition"
                 to="/"
               >
                 Home
               </NavLink>
             </li>
             <li>
-              <NavLink className="text-lg font-medium hover:text-blue-700 transition" to="/wishlist">
+              <NavLink className="text-lg font-medium tracking-wide hover:text-blue-900 transition" to="/wishlist">
                 Wishlist
               </NavLink>
             </li>
@@ -186,7 +186,7 @@ const Header = () => {
             {/* Mobile Category Dropdown */}
             <li>
               <button
-                className="text-lg font-medium hover:text-blue-700 transition w-full text-left"
+                className="text-lg font-medium tracking-wide hover:text-blue-900 transition w-full text-left"
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
               >
                 Category
@@ -211,7 +211,7 @@ const Header = () => {
               <>
                 <li>
                   <NavLink
-                    className="text-lg font-medium hover:text-blue-700 transition"
+                    className="text-lg font-medium hover:text-blue-900 transition"
                     to="/register"
                   >
                     Register
@@ -219,7 +219,7 @@ const Header = () => {
                 </li>
                 <li>
                   <NavLink
-                    className="text-lg font-medium hover:text-blue-700 transition"
+                    className="text-lg font-medium hover:text-blue-900 transition"
                     to="/login"
                   >
                     Login
@@ -231,7 +231,7 @@ const Header = () => {
                 <li className="relative">
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="text-lg font-medium hover:text-blue-700 transition"
+                    className="text-lg font-medium tracking-wide hover:text-blue-900 transition"
                   >
                     Account
                   </button>
