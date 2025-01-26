@@ -10,7 +10,7 @@ const UserMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/user/profile"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Profile
                     </NavLink>
@@ -18,7 +18,7 @@ const UserMenu = () => {
                 <li>
                     <NavLink
                         to="/dashboard/user/orders"
-                        className="block text-gray-700 hover:bg-blue-500 hover:text-white px-4 py-2 rounded-md transition"
+                        className="block text-gray-700 hover:bg-blue-800 hover:text-white px-4 py-2 rounded-md transition"
                     >
                         Orders
                     </NavLink>
