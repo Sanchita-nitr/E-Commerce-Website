@@ -13,14 +13,8 @@ dotenv.config();
 // Create Product
 export const createProductController = async (req, res) => {
     try {
-        console.log("Fields: ", req.fields); // Debug fields
-        console.log("Files: ", req.files);   // Debug files
         const { name, price, description, category, shipping, quantity } = req.fields;
         const { photo } = req.files;
-
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
 
         // Validation
         switch (true) {
@@ -34,7 +28,7 @@ export const createProductController = async (req, res) => {
                 return res.status(500).send({ error: "Category is required" });
             case !quantity:
                 return res.status(500).send({ error: "Quantity is required" });
-            case photo && photo.size > 5000000: // Corrected size validation
+            case photo && photo.size > 5000000:
                 return res.status(500).send({ error: "Photo must be less than 5MB" });
         }
 
@@ -42,16 +36,17 @@ export const createProductController = async (req, res) => {
         let slug = slugify(name);
         const existingProduct = await productModel.findOne({ slug });
         if (existingProduct) {
-            slug = `${slug}-${Date.now()}`; // Make the slug unique
+            slug = `${slug}-${Date.now()}`;
         }
 
         // Create product
         const product = new productModel({
             ...req.fields,
             slug,
+            // Add photoUrl to the product
         });
 
-        // Handle photo
+        // Handle photo upload (if provided)
         if (photo) {
             product.photo.data = fs.readFileSync(photo.path);
             product.photo.contentType = photo.type;
@@ -73,14 +68,13 @@ export const createProductController = async (req, res) => {
     }
 };
 
-
 // Get All Products
 export const getProductController = async (req, res) => {
     try {
         const products = await productModel.find({})
             .populate('category')
             .select("-photo")
-            // .limit(12)
+            // .limit(6)
             .sort({ createdAt: -1 });
 
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -106,7 +100,7 @@ export const getProductController = async (req, res) => {
 // Update Product
 export const updateProductController = async (req, res) => {
     try {
-        const { name, price, description, category, shipping, quantity } = req.fields;
+        const { name, price, description, category, quantity } = req.fields;
         const { photo } = req.files;
 
         // Validation
@@ -121,7 +115,7 @@ export const updateProductController = async (req, res) => {
                 return res.status(500).send({ error: "Category is required" });
             case !quantity:
                 return res.status(500).send({ error: "Quantity is required" });
-            case photo && photo.size > 1000000: // Corrected size validation
+            case photo && photo.size > 1000000:
                 return res.status(500).send({ error: "Photo must be less than 1MB" });
         }
 
@@ -129,14 +123,14 @@ export const updateProductController = async (req, res) => {
         let slug = slugify(name);
         const existingProduct = await productModel.findOne({ slug });
         if (existingProduct && existingProduct._id.toString() !== req.params.pid) {
-            slug = `${slug}-${Date.now()}`; // Make the slug unique
+            slug = `${slug}-${Date.now()}`;
         }
 
         const product = await productModel.findByIdAndUpdate(
             req.params.pid,
-            { ...req.fields, slug },
-            { new: true }
+            { ...req.fields, slug }, { new: true }
         );
+
 
         if (photo) {
             product.photo.data = fs.readFileSync(photo.path);
@@ -151,15 +145,13 @@ export const updateProductController = async (req, res) => {
             product,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error in updateProductController:", error);
         res.status(500).send({
             success: false,
-            error,
-            message: "Error in updating product",
+            error: error.message || "Error in updating product",
         });
     }
 };
-
 
 // Get Single Product
 export const getSingleProductController = async (req, res) => {
@@ -470,24 +462,24 @@ export const braintreePaymentController = async (req, res) => {
 
 export const getOrdersController = async (req, res) => {
     try {
-      console.log("Fetching orders for user:", req.user._id);
-      const orders = await orderModel
-        .find({ buyer: req.user._id })
-        .populate("products", "-photo")
-        .populate("buyer", "name");
-  
-      console.log("Fetched orders:", orders);
-      res.json(orders);
+        console.log("Fetching orders for user:", req.user._id);
+        const orders = await orderModel
+            .find({ buyer: req.user._id })
+            .populate("products", "-photo")
+            .populate("buyer", "name");
+
+        console.log("Fetched orders:", orders);
+        res.json(orders);
     } catch (error) {
-      console.error("Error fetching orders:", error);
-      res.status(500).send({
-        success: false,
-        message: "Error While Getting Orders",
-        error: error.message,
-      });
+        console.error("Error fetching orders:", error);
+        res.status(500).send({
+            success: false,
+            message: "Error While Getting Orders",
+            error: error.message,
+        });
     }
-  };
-  
+};
+
 
 //orders
 export const getAllOrdersController = async (req, res) => {
