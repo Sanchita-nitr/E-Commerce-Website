@@ -24,9 +24,10 @@ const Orders = () => {
   }, [auth?.token]);
 
   return (
-    <Layout title="Your Orders">
-      <div className="flex flex-col md:flex-row bg-gray-100 min-h-screen p-6">
-        <div className="md:w-1/4 bg-white rounded-lg shadow-lg p-4">
+    <Layout title="Dashboard - Profile">
+      <div className="flex flex-col sm:flex-row min-h-screen">
+        {/* User Menu */}
+        <div className="bg-gray-100 min-w-max">
           <UserMenu />
         </div>
         <div className="md:w-3/4 p-4">
