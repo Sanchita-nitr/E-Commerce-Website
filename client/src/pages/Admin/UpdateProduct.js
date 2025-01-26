@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminMenu from '../../components/Layout/AdminMenu';
@@ -15,7 +15,6 @@ const UpdateProduct = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [photo, setPhoto] = useState('');
-    const [photoUrl, setPhotoUrl] = useState(''); // New state for photo URL
     const [id, setId] = useState('');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
@@ -29,19 +28,18 @@ const UpdateProduct = () => {
             setPrice(data.product.price);
             setQuantity(data.product.quantity);
             setShipping(data.product.shipping);
-            setCategory(data.product.category?._id || '');
+            setCategory(data.product.category?._id || ''); // Set the category ID
             setPhoto(data.product.photo);
-            setPhotoUrl(data.product.photoUrl || ''); // Set photo URL
             setId(data.product._id);
         } catch (error) {
             console.error('Error fetching product:', error);
-            // toast.error('Failed to fetch product details');
+            toast.error('Failed to fetch product details');
         }
     };
 
     useEffect(() => {
         getSingleProduct();
-    }, [getSingleProduct]);
+    }, [params.slug]);
 
     // Fetch all categories
     const getAllCategories = async () => {
@@ -60,7 +58,7 @@ const UpdateProduct = () => {
 
     useEffect(() => {
         getAllCategories();
-    }, [getAllCategories]);
+    }, []);
 
     // Handle form submission to update a product
     const handleUpdate = async (e) => {
@@ -72,13 +70,12 @@ const UpdateProduct = () => {
             productData.append('price', price);
             productData.append('quantity', quantity);
             productData.append('shipping', shipping);
-            productData.append('category', category);
+            productData.append('category', category); // Send the selected category
             if (photo) productData.append('photo', photo);
-            if (photoUrl) productData.append('photoUrl', photoUrl); // Append photo URL
 
             const { data } = await axios.put(`${process.env.REACT_APP_API}/api/v1/products/update-product/${id}`, productData);
             if (data?.success) {
-                // toast.success('Product updated successfully');
+                toast.success('Product updated successfully');
                 navigate('/dashboard/admin/products');
             } else {
                 toast.error(data.error || 'Failed to update product');
@@ -95,7 +92,6 @@ const UpdateProduct = () => {
 
     // Handle product deletion
     const handleDelete = async () => {
-        console.log('Product ID:', id); // Debugging step
         try {
             const confirmDelete = window.confirm('Are you sure you want to delete this product?');
             if (!confirmDelete) return;
@@ -210,28 +206,6 @@ const UpdateProduct = () => {
                                         className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
                                     />
                                 </div>
-                                <div>
-                                    <select
-                                        value={shipping}
-                                        onChange={(e) => setShipping(e.target.value)}
-                                        className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
-                                    >
-                                        <option value="" disabled>
-                                            Select shipping
-                                        </option>
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <input
-                                        type="url"
-                                        value={photoUrl}
-                                        onChange={(e) => setPhotoUrl(e.target.value)}
-                                        placeholder="Enter the Photo URL"
-                                        className="p-4 w-full border rounded-md shadow-sm sm:text-sm"
-                                    />
-                                </div>
                                 <div className="space-x-5">
                                     <button
                                         type="submit"
@@ -254,6 +228,6 @@ const UpdateProduct = () => {
             </div>
         </Layout>
     );
-                                    };
+};
 
 export default UpdateProduct;
